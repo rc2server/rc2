@@ -16,3 +16,15 @@ cp the `build/libs/rc2drop-all-1.0-SNAPSHOT-all.jar` file from the rc2rest proje
 
 Build with `docker build -t rc2/appserver:0.1 .`
 
+
+# Running with Docker
+
+1. Build both images
+
+2. create a network: `docker network create --driver bridge rc2_nw`
+
+3. start db container: `docker run -d -P -h rc2db --net=rc2_nw --name=dbserver  rc2/database:0.1`
+
+4. start app container: `docker run -d -p 0.0.0.0:8088:8088 -h rc2app --net=rc2_nw --name=appserver  rc2/appserver:0.1`
+
+5. should be able to connect with a client to port 8080 on the host system via http. Change the port mapping if necessary.

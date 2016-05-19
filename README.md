@@ -6,6 +6,7 @@ Rc2 is a collaborative computing platform for using R. It encompasses the follow
 
 | Repository | Purpose |
 | --- | --- |
+| rc2root | Top level project with documentation, docker containers, sql scripts |
 | [rc2rest](https://github.com/wvuRc2/rc2rest) | Java app server |
 | [rc2compute](https://github.com/wvuRc2/rc2compute) | linux/c++ server that manages R sessions |
 | [rc2client](https://github.com/wvuRc2/rc2client) | The original Mac and iOS clients written at WVU |

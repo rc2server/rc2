@@ -2,4 +2,5 @@ containers/appserver/rc2drop.jar
 containers/appserver/jdk-8u92-linux-x64.tar.gz
 containers/dbserver/rc2.sql
 containers/dbserver/testData.sql
-
+containers/compute/jdk-8u92-linux-x64.tar.gz
+containers/compute/rc2compute.tar.gz

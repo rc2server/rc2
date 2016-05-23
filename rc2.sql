@@ -32,12 +32,12 @@ ALTER FUNCTION public.rcfile_notifyd() OWNER TO rc2;
 -- Name: rcfile_notifyi(); Type: FUNCTION; Schema: public; Owner: rc2
 --
 
-CREATE FUNCTION rcfile_notifyi() RETURNS trigger
+CREATE OR REPLACE FUNCTION rcfile_notifyi() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
 BEGIN
-perform pg_notify(cast('rcfile' as text), 'i' || cast(new.id as text) || '/0/0');
+perform pg_notify(cast('rcfile' as text), 'i' || cast(new.id as text) || '/' || cast(new.wspaceid as text) || '/0');
 return new;
 END;
 $$;
@@ -49,12 +49,12 @@ ALTER FUNCTION public.rcfile_notifyi() OWNER TO rc2;
 -- Name: rcfile_notifyu(); Type: FUNCTION; Schema: public; Owner: rc2
 --
 
-CREATE FUNCTION rcfile_notifyu() RETURNS trigger
+CREATE OR REPLACE FUNCTION rcfile_notifyu() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
 BEGIN
-perform pg_notify(cast('rcfile' as text), 'u' || cast(old.id as text) || '/0/0');
+perform pg_notify(cast('rcfile' as text), 'u' || cast(old.id as text) || '/' || cast(old.wspaceid as text) || '/0');
 return new;
 END;
 $$;

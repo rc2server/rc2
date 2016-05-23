@@ -32,6 +32,7 @@ RUN apt-get install -y postgresql-client-9.4 libgoogle-glog-dev
 ADD rc2compute.tar.gz /
 
 RUN cd /rc2compute/RInside && R CMD INSTALL .
+RUN cd /rc2compute/rc2 && R CMD INSTALL .
 
 RUN mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \
 	ln -s /usr/local/lib/R/site-library/RInside/libs/RInside.so RInside.so

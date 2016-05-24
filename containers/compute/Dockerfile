@@ -37,6 +37,8 @@ RUN cd /rc2compute/rc2 && R CMD INSTALL .
 RUN mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \
 	ln -s /usr/local/lib/R/site-library/RInside/libs/RInside.so RInside.so
 
+ARG deploytype="deploy"
+
 EXPOSE 7714
 
 CMD ["/rc2compute/rserver"]

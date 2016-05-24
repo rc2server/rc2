@@ -9,6 +9,8 @@ RUN update-alternatives --install "/usr/bin/java" "java" "/usr/local/java/bin/ja
 	&& update-alternatives --install "/usr/bin/javac" "javac" "/usr/local/java/bin/javac" 2000 \
 	&& update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/local/java/bin/javaws" 2000
 
+ARG deploytype="deploy"
+
 EXPOSE 8080
 
 CMD ["/usr/bin/java", "-jar", "/rc2/rc2drop.jar", "server", "/rc2/docker.yml"]

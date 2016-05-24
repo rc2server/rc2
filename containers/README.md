@@ -6,7 +6,7 @@ cd to the containers/dbserver directory
 
 `cp ../../*.sql .` These files are in .gitignore so you can leave them there.
 
-To build a version with test data use `docker build --build-arg deploytype=test -t rc2/database:0.1 `. To build one for deployment, leave out the build-arg argument.
+To build a version with test data use `docker build --build-arg deploytype=test -t rc2/database:0.1 .`. To build one for deployment, leave out the build-arg argument.
 
 ## appserver
 

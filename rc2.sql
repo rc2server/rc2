@@ -15,12 +15,12 @@ SET search_path = public, pg_catalog;
 -- Name: rcfile_notifyd(); Type: FUNCTION; Schema: public; Owner: rc2
 --
 
-CREATE FUNCTION rcfile_notifyd() RETURNS trigger
+CREATE OR REPLACE FUNCTION rcfile_notifyd() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
 BEGIN
-perform pg_notify(cast('rcfile' as text), 'd' || cast(old.id as text) || '/' || cast(old.wspaceid as text));
+perform pg_notify(cast('rcfile' as text), 'd' || cast(old.id as text) || '/' || cast(old.wspaceid as text) || '/' || cast(old.version as text));
 return new;
 END;
 $$;
@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION rcfile_notifyi() RETURNS trigger
     AS $$
 DECLARE
 BEGIN
-perform pg_notify(cast('rcfile' as text), 'i' || cast(new.id as text) || '/' || cast(new.wspaceid as text));
+perform pg_notify(cast('rcfile' as text), 'i' || cast(new.id as text) || '/' || cast(new.wspaceid as text) || '/' || cast(new.version as text));
 return new;
 END;
 $$;
@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION rcfile_notifyu() RETURNS trigger
     AS $$
 DECLARE
 BEGIN
-perform pg_notify(cast('rcfile' as text), 'u' || cast(old.id as text) || '/' || cast(old.wspaceid as text));
+perform pg_notify(cast('rcfile' as text), 'u' || cast(old.id as text) || '/' || cast(old.wspaceid as text) || '/' || cast(old.version as text));
 return new;
 END;
 $$;

@@ -1,7 +1,8 @@
 -- encrypted password is beavis
 insert into rcuser (id,login,email,firstname,lastname,admin,passworddata) values (1,'test','cornholio@stat.wvu.edu','Great','Cornholio', false, '$2a$10$cI1EdoI4B9vDlHrDukE2SOVEVKyFjjKi4ij3ggMh2mvNZLNcUsT9W');
-insert into rcworkspace (id, userid, name) values (1, 1, 'foofy');
-insert into rcworkspace (id, userid, name) values (2, 1, 'thrice');
+insert into rcproject(id,userid,name) values (1 , 1, 'sample');
+insert into rcworkspace (id, userid, projectid, name) values (1, 1, 1, 'foofy');
+insert into rcworkspace (id, userid, projectid, name) values (2, 1, 1, 'thrice');
 COPY rcfile (id, wspaceid, name, datecreated, lastmodified, version, filesize, objtype) FROM stdin;
 1	1	sample.R	2015-08-12 15:23:25.827231	2015-08-12 15:23:25.827231	0	28	file
 2	1	foo.R	2015-08-12 15:23:25.853145	2015-08-12 15:23:25.853145	0	28	file

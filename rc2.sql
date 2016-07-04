@@ -11,6 +11,22 @@ SET client_min_messages = warning;
 
 SET search_path = public, pg_catalog;
 
+
+CREATE OR REPLACE FUNCTION rc2CreateUser(login varchar(40), fname varchar(20), 
+	lname varchar(20), email varchar(80), password varchar(20))
+RETURNS integer AS $$
+DECLARE
+	userId integer;
+	projectId integer;
+BEGIN
+	INSERT INTO rcuser (login, firstname, lastname, email, passworddata) VALUES
+		(login, fname, lname, email, crypt(password, gen_salt('bf', 8))) RETURNING id INTO userId;
+	INSERT INTO rcproject (userid, name) VALUES (userId, 'default') RETURNING ID INTO projectId;
+	INSERT INTO rcworkspace (userid, projectid, name) VALUES (userId, projectId, 'default');
+	RETURN userId;
+END;
+$$ LANGUAGE plpgsql;
+
 --
 -- Name: rcfile_notifyd(); Type: FUNCTION; Schema: public; Owner: rc2
 --
@@ -126,24 +142,6 @@ CREATE TABLE crashdata (
 
 ALTER TABLE crashdata OWNER TO rc2;
 
---
--- Name: ldapserver; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE TABLE ldapserver (
-    id integer NOT NULL,
-    name character varying(40) NOT NULL,
-    hostname character varying(80) NOT NULL,
-    port integer DEFAULT 389,
-    basedn character varying(100) NOT NULL,
-    hosturi character varying(80),
-    loginkey character varying(10) NOT NULL
-);
-
-
-ALTER TABLE ldapserver OWNER TO rc2;
-
---
 -- Name: logapp_seq; Type: SEQUENCE; Schema: public; Owner: rc2
 --
 
@@ -386,10 +384,7 @@ CREATE TABLE rcuser (
     admin boolean DEFAULT false NOT NULL,
     enabled boolean DEFAULT true NOT NULL,
     version integer DEFAULT 1 NOT NULL,
-    lastmodified timestamp without time zone DEFAULT now() NOT NULL,
-    force_pass_reset boolean DEFAULT false NOT NULL,
-    ldapid integer,
-    ldaplogin character varying(80)
+    lastmodified timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -417,6 +412,7 @@ CREATE TABLE rcworkspace (
     id integer DEFAULT nextval('rcworkspace_seq'::regclass) NOT NULL,
     name character varying(60) NOT NULL,
     userid integer NOT NULL,
+    projectid integer NOT NULL,
     version integer DEFAULT 1 NOT NULL,
     lastaccess timestamp without time zone DEFAULT now() NOT NULL,
     datecreated timestamp without time zone DEFAULT now() NOT NULL
@@ -436,6 +432,21 @@ CREATE TABLE rcworkspacedata (
 
 
 ALTER TABLE rcworkspacedata OWNER TO rc2;
+
+create sequence rcproject_seq minvalue 1 start 100;
+
+--
+-- Name: rcproject; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+--
+
+CREATE TABLE rcproject (
+    id integer DEFAULT nextval('rcproject_seq'::regclass) NOT NULL,
+    name character varying(60) NOT NULL,
+    userid integer NOT NULL,
+    version integer DEFAULT 1 NOT NULL,
+    datecreated timestamp without time zone DEFAULT now() NOT NULL,
+    lastaccess timestamp without time zone DEFAULT now() NOT NULL
+);
 
 --
 -- Name: sessionimage_seq; Type: SEQUENCE; Schema: public; Owner: rc2
@@ -501,14 +512,6 @@ ALTER TABLE sessionrecord OWNER TO rc2;
 
 ALTER TABLE ONLY crashdata
     ADD CONSTRAINT crashdata_pkey PRIMARY KEY (id);
-
-
---
--- Name: ldapserver_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY ldapserver
-    ADD CONSTRAINT ldapserver_pkey PRIMARY KEY (id);
 
 
 --
@@ -728,14 +731,6 @@ ALTER TABLE ONLY rcfiledata
 
 
 --
--- Name: rcuser_ldapid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY rcuser
-    ADD CONSTRAINT rcuser_ldapid_fkey FOREIGN KEY (ldapid) REFERENCES ldapserver(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
 -- Name: rcworkspace_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
 --
 
@@ -766,6 +761,35 @@ ALTER TABLE ONLY sessionimage
 ALTER TABLE ONLY sessionrecord
     ADD CONSTRAINT sessionrecord_wspace_fk FOREIGN KEY (wspaceid) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
+
+--
+-- Name: rcproject_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+--
+
+ALTER TABLE ONLY rcproject
+    ADD CONSTRAINT rcproject_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcproject_update_lastmod; Type: TRIGGER; Schema: public; Owner: rc2
+--
+
+CREATE TRIGGER rcproject_update_lastmod BEFORE UPDATE ON rcproject FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
+
+
+--
+-- Name: rcproject_update_version; Type: TRIGGER; Schema: public; Owner: rc2
+--
+
+CREATE TRIGGER rcproject_update_version BEFORE UPDATE ON rcproject FOR EACH ROW EXECUTE PROCEDURE update_version_column();
+
+
+--
+-- Name: rcproject_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
+--
+
+ALTER TABLE ONLY rcproject
+    ADD CONSTRAINT rcproject_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --

@@ -1,0 +1,18 @@
+version: '2'
+services:
+  dbserver:
+    image: rc2/database
+    volumes:
+      - ./pgdata:/rc2
+  compute:
+    image: rc2/compute
+    depends_on:
+      - dbserver
+  appserver:
+    image: rc2/appserver
+    ports:
+      - "8088:8088"
+    depends_on:
+      - dbserver
+      - compute
+  

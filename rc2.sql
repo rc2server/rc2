@@ -111,6 +111,34 @@ $$;
 ALTER FUNCTION public.update_version_column() OWNER TO rc2;
 
 --
+-- Name: metadata; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+--
+
+CREATE TABLE metadata (
+    key character varying(200) NOT NULL,
+    valuestr character(200),
+    valueint integer
+);
+
+--
+-- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: rc2
+--
+
+COPY metadata (key, valuestr, valueint) FROM stdin;
+sqlSchemaVersion	\N	1
+\.
+
+
+--
+-- Name: metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+--
+
+ALTER TABLE ONLY metadata
+    ADD CONSTRAINT metadata_pkey PRIMARY KEY (key);
+
+
+
+--
 -- Name: crashdata_seq; Type: SEQUENCE; Schema: public; Owner: rc2
 --
 

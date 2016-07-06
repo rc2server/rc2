@@ -9,7 +9,8 @@ fi
 
 PGDATA="/rc2/pgdata"
 
-if ! [ -e "$PGDATA" ]; then
+#eventually we'll need to check schema version number via metadata table
+if ! [ -e "$PGDATA/pgdata" ]; then
 #	mkdir -p $PGDATA
 	/usr/lib/postgresql/9.4/bin/initdb -D $PGDATA
 	service postgresql start

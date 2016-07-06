@@ -20,7 +20,7 @@ if ! [ -e "$PGDATA/pgdata" ]; then
 	cd /usr/share/postgresql/9.4
 	echo "create extension pgcrypto" | psql  rc2
 	psql -U rc2 rc2 < /tmp/rc2.sql
-	echo "select rc2CreateUser('local', 'Local', 'Account', 'singlesignin@rc2.io', 'dfsafdsf');" | psql -U rc2 rc2
+	echo "select rc2CreateUser('local', 'Local', 'Account', 'singlesignin@rc2.io', 'local');" | psql -U rc2 rc2
 	service postgresql stop
 fi
 

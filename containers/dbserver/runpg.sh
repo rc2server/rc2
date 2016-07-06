@@ -13,7 +13,7 @@ if ! [ -e "$PGDATA" ]; then
 #	mkdir -p $PGDATA
 	/usr/lib/postgresql/9.4/bin/initdb -D $PGDATA
 	service postgresql start
-	psql --command "CREATE USER rc2;"
+	psql --command "CREATE USER rc2; CREATE EXTENSION IF NOT EXISTS pgcrypto;"
 	createdb -O rc2 rc2
 #	cd `pg_config --sharedir`
 	cd /usr/share/postgresql/9.4

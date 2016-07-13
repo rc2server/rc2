@@ -28,12 +28,4 @@ Build with `docker build -t rc2/compute .`
 
 1. Build all three images
 
-2. create a network: `docker network create --driver bridge rc2_nw`
-
-3. start db container: `docker run -d -P -h rc2db --net=rc2_nw --name=dbserver  rc2/database:0.1`
-
-4. start app container: `docker run -d -p 0.0.0.0:8088:8088 -h rc2app --net=rc2_nw --name=appserver  rc2/appserver:0.1`
-
-5. start the compute container: `docker run -d -p 0.0.0.0:7714:7714 -h rc2compute --net=rc2_nw --name=compute rc2/compute`
-
-6. should be able to connect with a client to port 8080 on the host system via http. Change the port mapping if necessary.
+2. from the containers directory, run `docker-compose up`. Type ctrl-c to stop the servers.

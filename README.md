@@ -15,6 +15,10 @@ Rc2 is a collaborative computing platform for using R. It encompasses the follow
 
 documentation is in the [wiki](https://github.com/wvuRc2/rc2/wiki)
 
+## creating a database
+
+Once a database is created, the admin needs to execute `CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;`.
+
 ## SQL create/dump
 
 To export updated schema, use `pg_dump -cOsx --if-exists -U rc2 rc2`. Test data is normally added manually. To dump the data for a table, use `pg_dump -U rc2 -t <tablename> -a rc2`.

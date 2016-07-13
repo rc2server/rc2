@@ -11,27 +11,112 @@ SET client_min_messages = warning;
 
 SET search_path = public, pg_catalog;
 
+ALTER TABLE IF EXISTS ONLY public.sessionrecord DROP CONSTRAINT IF EXISTS sessionrecord_wspace_fk;
+ALTER TABLE IF EXISTS ONLY public.sessionimage DROP CONSTRAINT IF EXISTS sessionimage_sessionrec_fk;
+ALTER TABLE IF EXISTS ONLY public.rcworkspacedata DROP CONSTRAINT IF EXISTS rcworkspacedata_id_fkey;
+ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_userid_fkey;
+ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_projectid_fkey;
+ALTER TABLE IF EXISTS ONLY public.rcuser DROP CONSTRAINT IF EXISTS rcuser_ldapid_fkey;
+ALTER TABLE IF EXISTS ONLY public.rcproject DROP CONSTRAINT IF EXISTS rcproject_userid_fkey;
+ALTER TABLE IF EXISTS ONLY public.rcfiledata DROP CONSTRAINT IF EXISTS rcfiledata_file_fk;
+ALTER TABLE IF EXISTS ONLY public.rcfile DROP CONSTRAINT IF EXISTS rcfile_wspaceid_fkey;
+ALTER TABLE IF EXISTS ONLY public.logentry DROP CONSTRAINT IF EXISTS logentry_uaid_fkey;
+ALTER TABLE IF EXISTS ONLY public.logentry DROP CONSTRAINT IF EXISTS logentry_appid_fkey;
+ALTER TABLE IF EXISTS ONLY public.crashdata DROP CONSTRAINT IF EXISTS crashdata_userid_fkey;
+DROP TRIGGER IF EXISTS rcworkspace_update_version ON public.rcworkspace;
+DROP TRIGGER IF EXISTS rcworkspace_update_lastmod ON public.rcworkspace;
+DROP TRIGGER IF EXISTS rcuser_update_version ON public.rcuser;
+DROP TRIGGER IF EXISTS rcuser_update_lastmod ON public.rcuser;
+DROP TRIGGER IF EXISTS rcproject_update_version ON public.rcproject;
+DROP TRIGGER IF EXISTS rcproject_update_lastmod ON public.rcproject;
+DROP TRIGGER IF EXISTS rcfile_trigger_notifyu ON public.rcfile;
+DROP TRIGGER IF EXISTS rcfile_trigger_notifyi ON public.rcfile;
+DROP TRIGGER IF EXISTS rcfile_trigger_notifyd ON public.rcfile;
+DROP INDEX IF EXISTS public.tokens_idx;
+DROP INDEX IF EXISTS public.sessionimage_sessionrec_idx;
+DROP INDEX IF EXISTS public.rcuser_login_idx;
+DROP INDEX IF EXISTS public.rcuser_email_idx;
+ALTER TABLE IF EXISTS ONLY public.sessionrecord DROP CONSTRAINT IF EXISTS sessionrecord_pkey;
+ALTER TABLE IF EXISTS ONLY public.sessionimage DROP CONSTRAINT IF EXISTS sessionimage_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcworkspacedata DROP CONSTRAINT IF EXISTS rcworkspacedata_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_uniqueid_key;
+ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcuser DROP CONSTRAINT IF EXISTS rcuser_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcuser DROP CONSTRAINT IF EXISTS rcuser_login_unique;
+ALTER TABLE IF EXISTS ONLY public.rctemplate DROP CONSTRAINT IF EXISTS rctemplate_pkey;
+ALTER TABLE IF EXISTS ONLY public.rctemplate DROP CONSTRAINT IF EXISTS rctemplate_name_key;
+ALTER TABLE IF EXISTS ONLY public.rcproject DROP CONSTRAINT IF EXISTS rcproject_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcnoance DROP CONSTRAINT IF EXISTS rcnoance_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcfiledata DROP CONSTRAINT IF EXISTS rcfiledata_pkey;
+ALTER TABLE IF EXISTS ONLY public.rcfile DROP CONSTRAINT IF EXISTS rcfile_pkey;
+ALTER TABLE IF EXISTS ONLY public.logua DROP CONSTRAINT IF EXISTS logua_pkey;
+ALTER TABLE IF EXISTS ONLY public.logintokens DROP CONSTRAINT IF EXISTS logintokens_pkey;
+ALTER TABLE IF EXISTS ONLY public.logentry DROP CONSTRAINT IF EXISTS logentry_pkey;
+ALTER TABLE IF EXISTS ONLY public.logapp DROP CONSTRAINT IF EXISTS logapp_pkey;
+ALTER TABLE IF EXISTS ONLY public.ldapserver DROP CONSTRAINT IF EXISTS ldapserver_pkey;
+ALTER TABLE IF EXISTS ONLY public.crashdata DROP CONSTRAINT IF EXISTS crashdata_pkey;
+DROP TABLE IF EXISTS public.metadata;
+DROP TABLE IF EXISTS public.sessionrecord;
+DROP SEQUENCE IF EXISTS public.sessionrecord_seq;
+DROP TABLE IF EXISTS public.sessionimage;
+DROP SEQUENCE IF EXISTS public.sessionimage_seq;
+DROP TABLE IF EXISTS public.rcworkspacedata;
+DROP TABLE IF EXISTS public.rcworkspace;
+DROP SEQUENCE IF EXISTS public.rcworkspace_seq;
+DROP TABLE IF EXISTS public.rcuser;
+DROP SEQUENCE IF EXISTS public.rcuser_seq;
+DROP TABLE IF EXISTS public.rctemplate;
+DROP SEQUENCE IF EXISTS public.rctemplate_seq;
+DROP TABLE IF EXISTS public.rcproject;
+DROP SEQUENCE IF EXISTS public.rcproject_seq;
+DROP TABLE IF EXISTS public.rcnoance;
+DROP SEQUENCE IF EXISTS public.rcnoance_seq;
+DROP TABLE IF EXISTS public.rcfiledata;
+DROP TABLE IF EXISTS public.rcfile;
+DROP SEQUENCE IF EXISTS public.rcfile_seq;
+DROP TABLE IF EXISTS public.logua;
+DROP SEQUENCE IF EXISTS public.logua_seq;
+DROP TABLE IF EXISTS public.logintokens;
+DROP SEQUENCE IF EXISTS public.logintokens_seq;
+DROP TABLE IF EXISTS public.logentry;
+DROP SEQUENCE IF EXISTS public.logentry_seq;
+DROP TABLE IF EXISTS public.logapp;
+DROP SEQUENCE IF EXISTS public.logapp_seq;
+DROP TABLE IF EXISTS public.ldapserver;
+DROP TABLE IF EXISTS public.crashdata;
+DROP SEQUENCE IF EXISTS public.crashdata_seq;
+DROP FUNCTION IF EXISTS public.update_version_column();
+DROP FUNCTION IF EXISTS public.update_lastmodified_column();
+DROP FUNCTION IF EXISTS public.rcfile_notifyu();
+DROP FUNCTION IF EXISTS public.rcfile_notifyi();
+DROP FUNCTION IF EXISTS public.rcfile_notifyd();
+DROP FUNCTION IF EXISTS public.rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying);
 
-CREATE OR REPLACE FUNCTION rc2CreateUser(login varchar(40), fname varchar(20), 
-	lname varchar(20), email varchar(80), password varchar(20))
-RETURNS integer AS $$
+--
+-- Name: rc2createuser(character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
 DECLARE
-	userId integer;
-	projectId integer;
+userId integer;
+projectId integer;
 BEGIN
-	INSERT INTO rcuser (login, firstname, lastname, email, passworddata) VALUES
-		(login, fname, lname, email, crypt(password, gen_salt('bf', 8))) RETURNING id INTO userId;
-	INSERT INTO rcproject (userid, name) VALUES (userId, 'default') RETURNING ID INTO projectId;
-	INSERT INTO rcworkspace (userid, projectid, name) VALUES (userId, projectId, 'default');
-	RETURN userId;
+INSERT INTO rcuser (login, firstname, lastname, email, passworddata) VALUES
+(login, fname, lname, email, crypt(password, gen_salt('bf', 8))) RETURNING id INTO userId;
+INSERT INTO rcproject (userid, name) VALUES (userId, 'default') RETURNING ID INTO projectId;
+INSERT INTO rcworkspace (userid, projectid, name) VALUES (userId, projectId, 'default');
+RETURN userId;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
 
 --
--- Name: rcfile_notifyd(); Type: FUNCTION; Schema: public; Owner: rc2
+-- Name: rcfile_notifyd(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE OR REPLACE FUNCTION rcfile_notifyd() RETURNS trigger
+CREATE FUNCTION rcfile_notifyd() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -42,13 +127,11 @@ END;
 $$;
 
 
-ALTER FUNCTION public.rcfile_notifyd() OWNER TO rc2;
-
 --
--- Name: rcfile_notifyi(); Type: FUNCTION; Schema: public; Owner: rc2
+-- Name: rcfile_notifyi(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE OR REPLACE FUNCTION rcfile_notifyi() RETURNS trigger
+CREATE FUNCTION rcfile_notifyi() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -59,13 +142,11 @@ END;
 $$;
 
 
-ALTER FUNCTION public.rcfile_notifyi() OWNER TO rc2;
-
 --
--- Name: rcfile_notifyu(); Type: FUNCTION; Schema: public; Owner: rc2
+-- Name: rcfile_notifyu(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE OR REPLACE FUNCTION rcfile_notifyu() RETURNS trigger
+CREATE FUNCTION rcfile_notifyu() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -76,10 +157,8 @@ END;
 $$;
 
 
-ALTER FUNCTION public.rcfile_notifyu() OWNER TO rc2;
-
 --
--- Name: update_lastmodified_column(); Type: FUNCTION; Schema: public; Owner: rc2
+-- Name: update_lastmodified_column(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION update_lastmodified_column() RETURNS trigger
@@ -92,10 +171,8 @@ END;
 $$;
 
 
-ALTER FUNCTION public.update_lastmodified_column() OWNER TO rc2;
-
 --
--- Name: update_version_column(); Type: FUNCTION; Schema: public; Owner: rc2
+-- Name: update_version_column(); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION update_version_column() RETURNS trigger
@@ -106,9 +183,6 @@ BEGIN
    RETURN NEW;
 END;
 $$;
-
-
-ALTER FUNCTION public.update_version_column() OWNER TO rc2;
 
 --
 -- Name: metadata; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
@@ -124,9 +198,7 @@ CREATE TABLE metadata (
 -- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: rc2
 --
 
-COPY metadata (key, valuestr, valueint) FROM stdin;
-sqlSchemaVersion	\N	1
-\.
+insert into metadata (key, valueint) values ('sqlSchemaVersion', 1);
 
 
 --
@@ -137,9 +209,8 @@ ALTER TABLE ONLY metadata
     ADD CONSTRAINT metadata_pkey PRIMARY KEY (key);
 
 
-
 --
--- Name: crashdata_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: crashdata_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE crashdata_seq
@@ -150,14 +221,12 @@ CREATE SEQUENCE crashdata_seq
     CACHE 1;
 
 
-ALTER TABLE crashdata_seq OWNER TO rc2;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: crashdata; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: crashdata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE crashdata (
@@ -168,9 +237,8 @@ CREATE TABLE crashdata (
 );
 
 
-ALTER TABLE crashdata OWNER TO rc2;
-
--- Name: logapp_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+--
+-- Name: logapp_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE logapp_seq
@@ -181,10 +249,8 @@ CREATE SEQUENCE logapp_seq
     CACHE 1;
 
 
-ALTER TABLE logapp_seq OWNER TO rc2;
-
 --
--- Name: logapp; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logapp; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE logapp (
@@ -194,10 +260,8 @@ CREATE TABLE logapp (
 );
 
 
-ALTER TABLE logapp OWNER TO rc2;
-
 --
--- Name: logentry_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: logentry_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE logentry_seq
@@ -208,10 +272,8 @@ CREATE SEQUENCE logentry_seq
     CACHE 1;
 
 
-ALTER TABLE logentry_seq OWNER TO rc2;
-
 --
--- Name: logentry; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logentry; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE logentry (
@@ -227,10 +289,8 @@ CREATE TABLE logentry (
 );
 
 
-ALTER TABLE logentry OWNER TO rc2;
-
 --
--- Name: logintokens_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: logintokens_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE logintokens_seq
@@ -241,10 +301,8 @@ CREATE SEQUENCE logintokens_seq
     CACHE 1;
 
 
-ALTER TABLE logintokens_seq OWNER TO rc2;
-
 --
--- Name: logintokens; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logintokens; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE logintokens (
@@ -256,10 +314,8 @@ CREATE TABLE logintokens (
 );
 
 
-ALTER TABLE logintokens OWNER TO rc2;
-
 --
--- Name: logua_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: logua_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE logua_seq
@@ -270,10 +326,8 @@ CREATE SEQUENCE logua_seq
     CACHE 1;
 
 
-ALTER TABLE logua_seq OWNER TO rc2;
-
 --
--- Name: logua; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logua; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE logua (
@@ -282,10 +336,8 @@ CREATE TABLE logua (
 );
 
 
-ALTER TABLE logua OWNER TO rc2;
-
 --
--- Name: rcfile_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: rcfile_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE rcfile_seq
@@ -296,10 +348,8 @@ CREATE SEQUENCE rcfile_seq
     CACHE 1;
 
 
-ALTER TABLE rcfile_seq OWNER TO rc2;
-
 --
--- Name: rcfile; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcfile; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rcfile (
@@ -314,10 +364,8 @@ CREATE TABLE rcfile (
 );
 
 
-ALTER TABLE rcfile OWNER TO rc2;
-
 --
--- Name: rcfiledata; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcfiledata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rcfiledata (
@@ -326,10 +374,8 @@ CREATE TABLE rcfiledata (
 );
 
 
-ALTER TABLE rcfiledata OWNER TO rc2;
-
 --
--- Name: rcnoance_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: rcnoance_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE rcnoance_seq
@@ -340,10 +386,8 @@ CREATE SEQUENCE rcnoance_seq
     CACHE 1;
 
 
-ALTER TABLE rcnoance_seq OWNER TO rc2;
-
 --
--- Name: rcnoance; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcnoance; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rcnoance (
@@ -355,10 +399,34 @@ CREATE TABLE rcnoance (
 );
 
 
-ALTER TABLE rcnoance OWNER TO rc2;
+--
+-- Name: rcproject_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE rcproject_seq
+    START WITH 100
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 
 --
--- Name: rctemplate_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: rcproject; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE rcproject (
+    id integer DEFAULT nextval('rcproject_seq'::regclass) NOT NULL,
+    name character varying(60) NOT NULL,
+    userid integer NOT NULL,
+    version integer DEFAULT 1 NOT NULL,
+    datecreated timestamp without time zone DEFAULT now() NOT NULL,
+    lastaccess timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: rctemplate_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE rctemplate_seq
@@ -369,10 +437,8 @@ CREATE SEQUENCE rctemplate_seq
     CACHE 1;
 
 
-ALTER TABLE rctemplate_seq OWNER TO rc2;
-
 --
--- Name: rctemplate; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rctemplate; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rctemplate (
@@ -382,10 +448,8 @@ CREATE TABLE rctemplate (
 );
 
 
-ALTER TABLE rctemplate OWNER TO rc2;
-
 --
--- Name: rcuser_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: rcuser_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE rcuser_seq
@@ -396,10 +460,8 @@ CREATE SEQUENCE rcuser_seq
     CACHE 1;
 
 
-ALTER TABLE rcuser_seq OWNER TO rc2;
-
 --
--- Name: rcuser; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcuser; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rcuser (
@@ -416,10 +478,8 @@ CREATE TABLE rcuser (
 );
 
 
-ALTER TABLE rcuser OWNER TO rc2;
-
 --
--- Name: rcworkspace_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: rcworkspace_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE rcworkspace_seq
@@ -430,10 +490,8 @@ CREATE SEQUENCE rcworkspace_seq
     CACHE 1;
 
 
-ALTER TABLE rcworkspace_seq OWNER TO rc2;
-
 --
--- Name: rcworkspace; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcworkspace; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rcworkspace (
@@ -443,14 +501,13 @@ CREATE TABLE rcworkspace (
     projectid integer NOT NULL,
     version integer DEFAULT 1 NOT NULL,
     lastaccess timestamp without time zone DEFAULT now() NOT NULL,
-    datecreated timestamp without time zone DEFAULT now() NOT NULL
+    datecreated timestamp without time zone DEFAULT now() NOT NULL,
+    uniqueid character(36) DEFAULT gen_random_uuid() NOT NULL
 );
 
 
-ALTER TABLE rcworkspace OWNER TO rc2;
-
 --
--- Name: rcworkspacedata; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcworkspacedata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE rcworkspacedata (
@@ -459,25 +516,8 @@ CREATE TABLE rcworkspacedata (
 );
 
 
-ALTER TABLE rcworkspacedata OWNER TO rc2;
-
-create sequence rcproject_seq minvalue 1 start 100;
-
 --
--- Name: rcproject; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE TABLE rcproject (
-    id integer DEFAULT nextval('rcproject_seq'::regclass) NOT NULL,
-    name character varying(60) NOT NULL,
-    userid integer NOT NULL,
-    version integer DEFAULT 1 NOT NULL,
-    datecreated timestamp without time zone DEFAULT now() NOT NULL,
-    lastaccess timestamp without time zone DEFAULT now() NOT NULL
-);
-
---
--- Name: sessionimage_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: sessionimage_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE sessionimage_seq
@@ -488,10 +528,8 @@ CREATE SEQUENCE sessionimage_seq
     CACHE 1;
 
 
-ALTER TABLE sessionimage_seq OWNER TO rc2;
-
 --
--- Name: sessionimage; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: sessionimage; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE sessionimage (
@@ -504,10 +542,8 @@ CREATE TABLE sessionimage (
 );
 
 
-ALTER TABLE sessionimage OWNER TO rc2;
-
 --
--- Name: sessionrecord_seq; Type: SEQUENCE; Schema: public; Owner: rc2
+-- Name: sessionrecord_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE sessionrecord_seq
@@ -518,10 +554,8 @@ CREATE SEQUENCE sessionrecord_seq
     CACHE 1;
 
 
-ALTER TABLE sessionrecord_seq OWNER TO rc2;
-
 --
--- Name: sessionrecord; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
+-- Name: sessionrecord; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE sessionrecord (
@@ -532,10 +566,8 @@ CREATE TABLE sessionrecord (
 );
 
 
-ALTER TABLE sessionrecord OWNER TO rc2;
-
 --
--- Name: crashdata_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: crashdata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY crashdata
@@ -543,7 +575,7 @@ ALTER TABLE ONLY crashdata
 
 
 --
--- Name: logapp_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logapp_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY logapp
@@ -551,7 +583,7 @@ ALTER TABLE ONLY logapp
 
 
 --
--- Name: logentry_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logentry_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY logentry
@@ -559,7 +591,7 @@ ALTER TABLE ONLY logentry
 
 
 --
--- Name: logintokens_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logintokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY logintokens
@@ -567,7 +599,7 @@ ALTER TABLE ONLY logintokens
 
 
 --
--- Name: logua_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: logua_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY logua
@@ -575,7 +607,7 @@ ALTER TABLE ONLY logua
 
 
 --
--- Name: rcfile_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcfile_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY rcfile
@@ -583,7 +615,7 @@ ALTER TABLE ONLY rcfile
 
 
 --
--- Name: rcfiledata_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcfiledata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY rcfiledata
@@ -591,7 +623,7 @@ ALTER TABLE ONLY rcfiledata
 
 
 --
--- Name: rcnoance_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcnoance_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY rcnoance
@@ -599,199 +631,7 @@ ALTER TABLE ONLY rcnoance
 
 
 --
--- Name: rctemplate_name_key; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY rctemplate
-    ADD CONSTRAINT rctemplate_name_key UNIQUE (name);
-
-
---
--- Name: rctemplate_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY rctemplate
-    ADD CONSTRAINT rctemplate_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcuser_login_unique; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY rcuser
-    ADD CONSTRAINT rcuser_login_unique UNIQUE (login);
-
-
---
--- Name: rcuser_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY rcuser
-    ADD CONSTRAINT rcuser_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcworkspace_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY rcworkspace
-    ADD CONSTRAINT rcworkspace_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcworkspacedata_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY rcworkspacedata
-    ADD CONSTRAINT rcworkspacedata_pkey PRIMARY KEY (id);
-
-
---
--- Name: sessionimage_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY sessionimage
-    ADD CONSTRAINT sessionimage_pkey PRIMARY KEY (id);
-
-
---
--- Name: sessionrecord_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY sessionrecord
-    ADD CONSTRAINT sessionrecord_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcuser_email_idx; Type: INDEX; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE UNIQUE INDEX rcuser_email_idx ON rcuser USING btree (email);
-
-
---
--- Name: rcuser_login_idx; Type: INDEX; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE UNIQUE INDEX rcuser_login_idx ON rcuser USING btree (login);
-
-
---
--- Name: sessionimage_sessionrec_idx; Type: INDEX; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE INDEX sessionimage_sessionrec_idx ON sessionimage USING btree (sessionid);
-
-
---
--- Name: tokens_idx; Type: INDEX; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE UNIQUE INDEX tokens_idx ON logintokens USING btree (userid, series_ident);
-
-
---
--- Name: rcfile_trigger_notifyd; Type: TRIGGER; Schema: public; Owner: rc2
---
-
-CREATE TRIGGER rcfile_trigger_notifyd AFTER DELETE ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyd();
-
-
---
--- Name: rcfile_trigger_notifyi; Type: TRIGGER; Schema: public; Owner: rc2
---
-
-CREATE TRIGGER rcfile_trigger_notifyi AFTER INSERT ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyi();
-
-
---
--- Name: rcfile_trigger_notifyu; Type: TRIGGER; Schema: public; Owner: rc2
---
-
-CREATE TRIGGER rcfile_trigger_notifyu AFTER UPDATE ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyu();
-
-
---
--- Name: rcuser_update_lastmod; Type: TRIGGER; Schema: public; Owner: rc2
---
-
-CREATE TRIGGER rcuser_update_lastmod BEFORE UPDATE ON rcuser FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
-
-
---
--- Name: crashdata_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY crashdata
-    ADD CONSTRAINT crashdata_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: logentry_appid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY logentry
-    ADD CONSTRAINT logentry_appid_fkey FOREIGN KEY (appid) REFERENCES logapp(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: logentry_uaid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY logentry
-    ADD CONSTRAINT logentry_uaid_fkey FOREIGN KEY (uaid) REFERENCES logua(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: rcfile_wspaceid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY rcfile
-    ADD CONSTRAINT rcfile_wspaceid_fkey FOREIGN KEY (wspaceid) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: rcfiledata_file_fk; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY rcfiledata
-    ADD CONSTRAINT rcfiledata_file_fk FOREIGN KEY (id) REFERENCES rcfile(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: rcworkspace_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY rcworkspace
-    ADD CONSTRAINT rcworkspace_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: rcworkspacedata_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY rcworkspacedata
-    ADD CONSTRAINT rcworkspacedata_id_fkey FOREIGN KEY (id) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: sessionimage_sessionrec_fk; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY sessionimage
-    ADD CONSTRAINT sessionimage_sessionrec_fk FOREIGN KEY (sessionid) REFERENCES sessionrecord(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: sessionrecord_wspace_fk; Type: FK CONSTRAINT; Schema: public; Owner: rc2
---
-
-ALTER TABLE ONLY sessionrecord
-    ADD CONSTRAINT sessionrecord_wspace_fk FOREIGN KEY (wspaceid) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: rcproject_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
+-- Name: rcproject_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY rcproject
@@ -799,25 +639,246 @@ ALTER TABLE ONLY rcproject
 
 
 --
--- Name: rcproject_update_lastmod; Type: TRIGGER; Schema: public; Owner: rc2
+-- Name: rctemplate_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rctemplate
+    ADD CONSTRAINT rctemplate_name_key UNIQUE (name);
+
+
+--
+-- Name: rctemplate_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rctemplate
+    ADD CONSTRAINT rctemplate_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcuser_login_unique; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rcuser
+    ADD CONSTRAINT rcuser_login_unique UNIQUE (login);
+
+
+--
+-- Name: rcuser_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rcuser
+    ADD CONSTRAINT rcuser_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcworkspace_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rcworkspace
+    ADD CONSTRAINT rcworkspace_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcworkspace_uniqueid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rcworkspace
+    ADD CONSTRAINT rcworkspace_uniqueid_key UNIQUE (uniqueid);
+
+
+--
+-- Name: rcworkspacedata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY rcworkspacedata
+    ADD CONSTRAINT rcworkspacedata_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sessionimage_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY sessionimage
+    ADD CONSTRAINT sessionimage_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sessionrecord_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY sessionrecord
+    ADD CONSTRAINT sessionrecord_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rcuser_email_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX rcuser_email_idx ON rcuser USING btree (email);
+
+
+--
+-- Name: rcuser_login_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX rcuser_login_idx ON rcuser USING btree (login);
+
+
+--
+-- Name: sessionimage_sessionrec_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX sessionimage_sessionrec_idx ON sessionimage USING btree (sessionid);
+
+
+--
+-- Name: tokens_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX tokens_idx ON logintokens USING btree (userid, series_ident);
+
+
+--
+-- Name: rcfile_trigger_notifyd; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcfile_trigger_notifyd AFTER DELETE ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyd();
+
+
+--
+-- Name: rcfile_trigger_notifyi; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcfile_trigger_notifyi AFTER INSERT ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyi();
+
+
+--
+-- Name: rcfile_trigger_notifyu; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcfile_trigger_notifyu AFTER UPDATE ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyu();
+
+
+--
+-- Name: rcproject_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcproject_update_lastmod BEFORE UPDATE ON rcproject FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
 
 
 --
--- Name: rcproject_update_version; Type: TRIGGER; Schema: public; Owner: rc2
+-- Name: rcproject_update_version; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcproject_update_version BEFORE UPDATE ON rcproject FOR EACH ROW EXECUTE PROCEDURE update_version_column();
 
 
 --
--- Name: rcproject_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: rc2
+-- Name: rcuser_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcuser_update_lastmod BEFORE UPDATE ON rcuser FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
+
+
+--
+-- Name: rcuser_update_version; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcuser_update_version BEFORE UPDATE ON rcuser FOR EACH ROW EXECUTE PROCEDURE update_version_column();
+
+
+--
+-- Name: rcworkspace_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcworkspace_update_lastmod BEFORE UPDATE ON rcworkspace FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
+
+
+--
+-- Name: rcworkspace_update_version; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER rcworkspace_update_version BEFORE UPDATE ON rcworkspace FOR EACH ROW EXECUTE PROCEDURE update_version_column();
+
+
+--
+-- Name: crashdata_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY crashdata
+    ADD CONSTRAINT crashdata_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: logentry_appid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY logentry
+    ADD CONSTRAINT logentry_appid_fkey FOREIGN KEY (appid) REFERENCES logapp(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: logentry_uaid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY logentry
+    ADD CONSTRAINT logentry_uaid_fkey FOREIGN KEY (uaid) REFERENCES logua(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: rcfile_wspaceid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rcfile
+    ADD CONSTRAINT rcfile_wspaceid_fkey FOREIGN KEY (wspaceid) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: rcfiledata_file_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rcfiledata
+    ADD CONSTRAINT rcfiledata_file_fk FOREIGN KEY (id) REFERENCES rcfile(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: rcproject_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcproject
     ADD CONSTRAINT rcproject_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: rcworkspace_projectid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rcworkspace
+    ADD CONSTRAINT rcworkspace_projectid_fkey FOREIGN KEY (projectid) REFERENCES rcproject(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: rcworkspacedata_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY rcworkspacedata
+    ADD CONSTRAINT rcworkspacedata_id_fkey FOREIGN KEY (id) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sessionimage_sessionrec_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sessionimage
+    ADD CONSTRAINT sessionimage_sessionrec_fk FOREIGN KEY (sessionid) REFERENCES sessionrecord(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sessionrecord_wspace_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sessionrecord
+    ADD CONSTRAINT sessionrecord_wspace_fk FOREIGN KEY (wspaceid) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --

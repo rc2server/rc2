@@ -7,10 +7,15 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
 	&& echo "deb http://cran.mirrors.hoobly.com/bin/linux/ubuntu xenial/" > /etc/apt/sources.list.d/R.list \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
-	&& apt-get update \
-	&& apt-get install -y alien build-essential xorg-dev libtiff5-dev libcairo2-dev libbz2-dev libcurl4-openssl-dev \
-		libssl-dev gfortran libreadline-dev pandoc wget perl postgresql-client-9.4 libgoogle-glog-dev \
-	&& apt-get clean
+	&& apt-get update
+
+#libgoogle-glog-dev
+
+RUN apt-get install -y alien build-essential xorg-dev cmake git gdb
+RUN apt-get install -y postgresql-client-9.4 libpq-dev 
+RUN apt-get install -y libboost-all.dev uuid-dev libevent-dev libevent-pthreads-2.0.5 libgtest-dev
+RUN apt-get install -y libtiff5-dev libcairo2-dev libbz2-dev libcurl4-openssl-dev libssl-dev libreadline-dev 
+RUN apt-get install -y gfortran  perl pandoc vim
 
 RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean
 
@@ -18,15 +23,11 @@ RUN apt-get install -y r-base-dev \
 	&& echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \
 	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp"))' && apt-get clean
 
-RUN	wget -O /rc2compute.tar.gz https://github.com/wvuRc2/rc2compute/releases/download/v0.2.0/rc2compute.tar.gz \
-	&& tar zxf rc2compute.tar.gz && rm rc2compute.tar.gz
+RUN cd /usr/src/gtest && cmake . && make -j4 && cp libgtest.a /usr/lib/ && cp libgtest_main.a /usr/lib/ && make clean
 
-#ADD rc2compute.tar.gz /
-
-RUN (cd /rc2compute/RInside && R CMD INSTALL .) && (cd /rc2compute/rc2 && R CMD INSTALL .) \
-	&& mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \
-	ln -s /usr/local/lib/R/site-library/RInside/libs/RInside.so RInside.so
-
-EXPOSE 7714
-
-CMD ["/rc2compute/rserver"]
+RUN cd /tmp && \
+	git clone https://github.com/wvuRc2/rc2compute.git && \
+	cd rc2compute/vendor/RInside && \
+	R CMD INSTALL . && \
+	cd / && \
+	rm -rf /tmp/rc2compute

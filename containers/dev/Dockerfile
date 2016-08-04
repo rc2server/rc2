@@ -25,9 +25,11 @@ RUN apt-get install -y r-base-dev \
 
 RUN cd /usr/src/gtest && cmake . && make -j4 && cp libgtest.a /usr/lib/ && cp libgtest_main.a /usr/lib/ && make clean
 
+ADD rinside.patch /tmp/rinside.patch
 RUN cd /tmp && \
-	git clone https://github.com/wvuRc2/rc2compute.git && \
-	cd rc2compute/vendor/RInside && \
+	wget https://cran.r-project.org/src/contrib/RInside_0.2.13.tar.gz && \
+	tar zxf RInside_0.2.13.tar.gz && \
+	cd RInside && \
+	patch -p1 < /tmp/rinside.patch && \
 	R CMD INSTALL . && \
-	cd / && \
-	rm -rf /tmp/rc2compute
+	cd /tmp && rm -rf rinside.patch RInside RInside*.tar.gz

@@ -12,12 +12,13 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 #libgoogle-glog-dev
 
 RUN apt-get install -y alien build-essential xorg-dev cmake git gdb
-RUN apt-get install -y postgresql-client-9.4 libpq-dev 
+RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean
+RUN apt-get install -y gfortran perl pandoc vim
+
+RUN apt-get install -y python-software-properties postgresql-9.4 postgresql-contrib-9.4 postgresql-client-9.4 libpq-dev 
+
 RUN apt-get install -y libboost-all.dev uuid-dev libevent-dev libevent-pthreads-2.0.5 libgtest-dev
 RUN apt-get install -y libtiff5-dev libcairo2-dev libbz2-dev libcurl4-openssl-dev libssl-dev libreadline-dev 
-RUN apt-get install -y gfortran  perl pandoc vim
-
-RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean
 
 RUN apt-get install -y r-base-dev \
 	&& echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \

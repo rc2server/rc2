@@ -34,3 +34,6 @@ RUN cd /tmp && \
 	patch -p1 < /tmp/rinside.patch && \
 	R CMD INSTALL . && \
 	cd /tmp && rm -rf rinside.patch RInside RInside*.tar.gz
+
+RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.4/main/pg_hba.conf && \
+	echo "listen_addresses='*'" >> /etc/postgresql/9.4/main/postgresql.conf

@@ -1,15 +1,16 @@
 FROM library/ubuntu:xenial
 MAINTAINER Mark Lilback <mark@lilback.com>
 
-RUN apt-get update && apt-get install -y wget default-jre 
+RUN apt-get update && apt-get install -y wget default-jre apt-transport-https
 
+#add keys and repositories for postgres, R, and docker
 RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
+	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
+	&& apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
 	&& echo "deb http://cran.mirrors.hoobly.com/bin/linux/ubuntu xenial/" > /etc/apt/sources.list.d/R.list \
-	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
+	&& echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" > /etc/apt/sources.list.d/docker.list \
 	&& apt-get update
-
-#libgoogle-glog-dev
 
 RUN apt-get install -y alien build-essential xorg-dev cmake git gdb
 RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean
@@ -26,6 +27,7 @@ RUN apt-get install -y r-base-dev \
 
 RUN cd /usr/src/gtest && cmake . && make -j4 && cp libgtest.a /usr/lib/ && cp libgtest_main.a /usr/lib/ && make clean
 
+#install Rinside with our patch to enable callbacks
 ADD rinside.patch /tmp/rinside.patch
 RUN cd /tmp && \
 	wget https://cran.r-project.org/src/contrib/RInside_0.2.13.tar.gz && \
@@ -33,8 +35,15 @@ RUN cd /tmp && \
 	cd RInside && \
 	patch -p1 < /tmp/rinside.patch && \
 	R CMD INSTALL . && \
-	cd /tmp && rm -rf rinside.patch RInside RInside*.tar.gz
+	cd /tmp && rm -rf rinside.patch RInside RInside*.tar.gz && \
+	cd /usr/local/lib/R/site-library/RInside/libs && \
+	ln -s RInside.so libRInside.so
+
+RUN apt-get install -y docker-engine
 
 COPY *.conf /etc/postgresql/9.4/main/
 
 RUN locale-gen en_US.UTF-8
+
+#keep it alive forever so we can use "docker exec -it container_name bash" to connect to it
+CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"

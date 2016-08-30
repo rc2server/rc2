@@ -41,7 +41,9 @@ RUN cd /tmp && \
 
 RUN apt-get install -y docker-engine
 
-COPY *.conf /etc/postgresql/9.4/main/
+COPY postgresql.conf pg_hba.conf /etc/postgresql/9.4/main/
+COPY docker-default /etc/default/docker
+COPY docker.conf /etc/systemd/system/docker.service.d/docker.conf
 
 RUN locale-gen en_US.UTF-8
 

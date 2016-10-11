@@ -30,3 +30,5 @@ RUN (cd /rc2compute/RInside && R CMD INSTALL .) && (cd /rc2compute/rc2 && R CMD 
 EXPOSE 7714
 
 CMD ["/rc2compute/rserver"]
+
+LABEL io.rc2.type=compute

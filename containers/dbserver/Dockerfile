@@ -8,8 +8,9 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/
 RUN apt-get update && apt-get install -y python-software-properties software-properties-common postgresql-${pgversion} postgresql-client-${pgversion} postgresql-contrib-${pgversion} libpq-dev
 RUN mkdir -p /rc2/pgdata; chown -R postgres /rc2; chmod 700 /rc2 /rc2/pgdata
 RUN locale-gen en_US.UTF-8
-RUN pg_dropcluster 9.4 main
-RUN pg_createcluster -d /rc2/pgdata --locale=en_US.UTF-8 9.4 main
+RUN pg_dropcluster ${pgversion} main
+RUN pg_createcluster -d /rc2/pgdata --locale=en_US.UTF-8 ${pgversion} main
+RUN mkdir -p /rc2 && chown postgres:postgres /rc2
 
 USER postgres
 COPY *.conf /etc/postgresql/${pgversion}/main/
@@ -22,3 +23,5 @@ ENV LC_ALL en_US.UTF-8
 EXPOSE 5432
 
 CMD ["var/lib/postgresql/runpg.sh", "9.4"]
+
+LABEL io.rc2.type=dbserver

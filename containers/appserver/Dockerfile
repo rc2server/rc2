@@ -14,3 +14,5 @@ ADD *.yml /rc2/
 EXPOSE 8080
 
 CMD ["/usr/bin/java", "-jar", "/rc2/rc2drop.jar", "server", "/rc2/docker.yml"]
+
+LABEL io.rc2.type=appserver

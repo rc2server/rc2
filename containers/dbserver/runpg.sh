@@ -1,6 +1,21 @@
 #!/bin/bash
 
-PGVersion=$1
+CREATEONLY=0
+OPTIND=1
+while getopts "V:c" opt; do
+	case "$opt" in
+		c)
+			CREATEONLY=1
+			;;
+		V)
+			PGVersion=$OPTARG
+			;;
+	esac
+done
+shift "$((OPTIND-1))" #shift off the args that were parsed
+
+
+#PGVersion=$1
 
 if [ -z "$PGVersion" ]; then
 	echo "postgres version not specified"
@@ -12,7 +27,7 @@ PGDATA="/rc2/pgdata"
 #eventually we'll need to check schema version number via metadata table
 if ! [ -e "$PGDATA" ]; then
 	echo "$PGDATA does not exist. creating database"
-#	mkdir -p $PGDATA
+	mkdir -p $PGDATA
 	/usr/lib/postgresql/9.4/bin/initdb -D $PGDATA
 	service postgresql start
 	psql --command "CREATE USER rc2; CREATE EXTENSION IF NOT EXISTS pgcrypto;"
@@ -25,5 +40,7 @@ if ! [ -e "$PGDATA" ]; then
 	service postgresql stop
 fi
 
+if [ "$CREATEONLY" -eq "0" ]; then 
+	/usr/bin/pg_ctlcluster ${PGVersion} main start --foreground
+fi
 
-/usr/bin/pg_ctlcluster ${PGVersion} main start --foreground

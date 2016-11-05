@@ -35,6 +35,10 @@ RUN cd /tmp && \
 	R CMD INSTALL . && \
 	cd /tmp && rm -rf rinside.patch RInside RInside*.tar.gz
 
-COPY *.conf /etc/postgresql/9.4/main/
+COPY postgresql.conf pg_hba.conf /etc/postgresql/9.4/main/
+COPY docker-default /etc/default/docker
+COPY docker.conf /etc/systemd/system/docker.service.d/docker.conf
 
 RUN locale-gen en_US.UTF-8
+
+RUN wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz -O /bin/docker && chmod +x /bin/docker

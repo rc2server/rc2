@@ -1,15 +1,15 @@
 version: '2'
 services:
   dbserver:
-    image: rc2/dbserver
+    image: rc2server/dbserver
     volumes:
       - ./pgdata:/rc2
   compute:
-    image: rc2/compute
+    image: rc2server/compute
     depends_on:
       - dbserver
   appserver:
-    image: rc2/appserver
+    image: rc2server/appserver
     ports:
       - "8088:8088"
     depends_on:

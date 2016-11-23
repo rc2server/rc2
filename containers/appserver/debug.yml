@@ -20,3 +20,5 @@ databaseConfig:
 
 sessionConfig:
   showOutputFileSizeLimitInKB: 25
+  idleTimeout: 28800
+  

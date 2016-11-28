@@ -18,10 +18,11 @@ RUN apt-get install -y r-base-dev \
 	&& echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \
 	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp"))' && apt-get clean
 
-RUN	wget -O /rc2compute.tar.gz https://github.com/wvuRc2/rc2compute/releases/download/v0.2.0/rc2compute.tar.gz \
-	&& tar zxf rc2compute.tar.gz && rm rc2compute.tar.gz
-
-#ADD rc2compute.tar.gz /
+ARG FORCE_DLOAD=0
+RUN wget --max-redirect 4 -O - --quiet https://github.com/rc2server/compute/releases/latest |\
+	egrep -o "/rc2server/compute/releases/download/v[0-9.]*/rc2compute.tar.gz" | \
+	wget --quiet --base=https://github.com/ -i - -O /rc2compute.tar.gz && ls -l /rc2compute.tar.gz \
+	&& tar zxf rc2compute.tar.gz && rm rc2compute.tar.gz && ls -l /rc2compute/
 
 RUN (cd /rc2compute/RInside && R CMD INSTALL .) && (cd /rc2compute/rc2 && R CMD INSTALL .) \
 	&& mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \

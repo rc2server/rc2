@@ -10,8 +10,9 @@ server:
 #      validateCerts: false
 
 
-prettyPrint: true
+prettyPrint: false
 enableTracing: true
+fileDownloadDelay: 0
 
 databaseConfig:
   dbhost: dbserver 

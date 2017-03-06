@@ -6,6 +6,7 @@ use Cpanel::JSON::XS qw(decode_json encode_json);
 use Digest::SHA qw(sha256_hex);
 use Getopt::Long;
 use Date::Format;
+use DateTime::Format::RFC3339 qw();
 
 #the following changes all http handling to be performed over unix domain sockets
 use LWP::Protocol::http::SocketUnixAlt;
@@ -90,9 +91,11 @@ delete $$dbserver{'layers'};
 delete $$compute{'layers'};
 my %finalImages = ( 'dbserver' => $dbserver, 'appserver' => $appserver, 'compute' => $compute);
 
-my $version = time2str("%Y%m%d01", time);
+#my $version = time2str("%Y%m%d01", time);
+my $dtFormatter = DateTime::Format::RFC3339->new();
+my $datestamp = $dtFormatter->format_datetime(DateTime->now);
 
-my %wrapper = ( 'version' => $version, 'images' => \%finalImages );
+my %wrapper = ( 'version' => 2, 'timestamp' => $datestamp, 'images' => \%finalImages );
 print encode_json(\%wrapper) . "\n";
 
 

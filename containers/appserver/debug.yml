@@ -12,10 +12,11 @@ server:
 
 prettyPrint: true
 enableTracing: true
+fileDownloadDelay: 1000
 
 databaseConfig:
-  dbhost: localhost
-  dbname: rc2test
+  dbhost: dbserver
+  dbname: rc2
   dbuser: rc2
 
 sessionConfig:

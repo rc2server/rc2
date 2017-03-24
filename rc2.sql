@@ -198,7 +198,7 @@ CREATE TABLE metadata (
 -- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: rc2
 --
 
-insert into metadata (key, valueint) values ('sqlSchemaVersion', 1);
+insert into metadata (key, valueint) values ('sqlSchemaVersion', 2);
 
 
 --
@@ -537,6 +537,7 @@ CREATE TABLE sessionimage (
     sessionid integer NOT NULL,
     batchid integer DEFAULT 0 NOT NULL,
     name character varying(80) NOT NULL,
+    title character varying(255),
     datecreated timestamp without time zone DEFAULT now() NOT NULL,
     imgdata bytea
 );

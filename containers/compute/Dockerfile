@@ -15,6 +15,8 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean
 
 RUN apt-get install -y r-base-dev \
+	&& mkdir -p /rc2compute/userlib \
+	&& echo 'R_LIBS_USER=/rc2compute/userlib' >> /etc/R/Renviron.site \
 	&& echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \
 	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp"))' && apt-get clean
 

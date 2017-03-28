@@ -18,7 +18,7 @@ RUN apt-get install -y r-base-dev \
 	&& mkdir -p /rc2compute/userlib \
 	&& echo 'R_LIBS_USER=/rc2compute/userlib' >> /etc/R/Renviron.site \
 	&& echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \
-	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp"))' && apt-get clean
+	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp","inline"), "/usr/local/lib/R/site-library")' && apt-get clean
 
 ARG FORCE_DLOAD=0
 RUN wget --max-redirect 4 -O - --quiet https://github.com/rc2server/compute/releases/latest |\
@@ -26,7 +26,8 @@ RUN wget --max-redirect 4 -O - --quiet https://github.com/rc2server/compute/rele
 	wget --quiet --base=https://github.com/ -i - -O /rc2compute.tar.gz && ls -l /rc2compute.tar.gz \
 	&& tar zxf rc2compute.tar.gz && rm rc2compute.tar.gz && ls -l /rc2compute/
 
-RUN (cd /rc2compute/RInside && R CMD INSTALL .) && (cd /rc2compute/rc2 && R CMD INSTALL .) \
+RUN (cd /rc2compute/RInside && R CMD INSTALL -l /usr/local/lib/R/site-library .) \
+	&& (cd /rc2compute/rc2 && R CMD INSTALL -l /usr/local/lib/R/site-library .) \
 	&& mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \
 	ln -s /usr/local/lib/R/site-library/RInside/libs/RInside.so RInside.so
 

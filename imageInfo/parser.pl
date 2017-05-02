@@ -95,7 +95,7 @@ my %finalImages = ( 'dbserver' => $dbserver, 'appserver' => $appserver, 'compute
 my $dtFormatter = DateTime::Format::RFC3339->new();
 my $datestamp = $dtFormatter->format_datetime(DateTime->now);
 
-my %wrapper = ( 'version' => 2, 'timestamp' => $datestamp, 'images' => \%finalImages );
+my %wrapper = ( 'version' => 2, 'lastCompatibleVersion' => 2, 'timestamp' => $datestamp, 'images' => \%finalImages );
 print encode_json(\%wrapper) . "\n";
 
 

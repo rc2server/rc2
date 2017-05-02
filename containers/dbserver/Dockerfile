@@ -14,7 +14,7 @@ RUN pg_createcluster -d /rc2/pgdata --locale=en_US.UTF-8 ${pgversion} main && rm
 
 USER postgres
 COPY *.conf /etc/postgresql/${pgversion}/main/
-COPY rc2.sql /tmp/rc2.sql
+COPY rc2.sql /rc2/rc2.sql
 COPY runpg.sh /var/lib/postgresql/runpg.sh
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -22,7 +22,6 @@ ENV LC_ALL en_US.UTF-8
 #RUN /var/lib/postgresql/runpg.sh -V ${pgversion} -c
 EXPOSE 5432
 
-#VOLUME ["/rc2/pgdata"]
 CMD ["var/lib/postgresql/runpg.sh", "-V", "9.4"]
 
 LABEL io.rc2.type=dbserver

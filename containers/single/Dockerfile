@@ -60,4 +60,6 @@ RUN mkdir /rc2/logs
 
 EXPOSE 8088
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+LABEL io.rc2.type=combined

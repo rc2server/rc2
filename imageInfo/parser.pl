@@ -15,11 +15,12 @@ LWP::Protocol::implementor( http => 'LWP::Protocol::http::SocketUnixAlt' );
 my $baseUrl = "http:/var/run/docker.sock/";
 
 my $dbver, my $appver, my $compver;
-GetOptions(	"dbserver=s" => \$dbver, 
-			"appserver=s" => \$appver,
-			"compute=s" => \$compver);
+GetOptions(	#"dbserver=s" => \$dbver, 
+#			"appserver=s" => \$appver,
+			"combined=s" => \$compver);
 
-($dbver && $appver && $compver) || die "must supply -d -a -c with versions";
+#($dbver && $appver && $compver) || die "must supply -d -a -c with versions";
+($compver) || die "must supply -c with version";
 
 my $text = get("$baseUrl/images/json");
 my $ilist = decode_json $text;
@@ -47,49 +48,23 @@ foreach my $anImage (@$ilist) {
 	}
 }
 
-my $dbserver = $images{"rc2server/dbserver:$dbver"} || die "dbserver:$dbver not found";
-my $appserver = $images{"rc2server/appserver:$appver"} || die "appserver:$appver not found";
-my $compute = $images{"rc2server/compute:$compver"} || die "compute:$compver not found";
+#my $dbserver = $images{"rc2server/dbserver:$dbver"} || die "dbserver:$dbver not found";
+#my $appserver = $images{"rc2server/appserver:$appver"} || die "appserver:$appver not found";
+my $compute = $images{"rc2server/combined:$compver"} || die "combined:$compver not found";
 
 my %layers = ();
 my $appskip = 0;
 my $compskip = 0;
 #store all layers from dbserver
-my $layerArray = $$dbserver{'layers'};
+my $layerArray = $$compute{'layers'};
 for my $aLayer (@$layerArray) {
 	my $hash = &digestLayer($aLayer);
 	$layers{$hash} = 1;
 }
-$$dbserver{'estSize'} = $$dbserver{'size'};
-#figure out what we can skip from $appserver
-$layerArray = $$appserver{'layers'};
-for my $applayer (@$layerArray) {
-	my $hash = &digestLayer($applayer);
-	my $val = $layers{$hash};
-	if (defined $val && $val > 0) {
-		$appskip += $$applayer{'size'};
-	}
-}
-my $appremain = $$appserver{'size'} - $appskip;
-print STDERR "skipping app: $appskip (remain $appremain)\n";
-$$appserver{'estSize'} = $appremain;
-#figure out which compute layers can be skipped
-$layerArray = $$dbserver{'layers'};
-for my $cLayer (@$layerArray) {
-	my $hash = &digestLayer($cLayer);
-	my $val = $layers{$hash};
-	if ($val > 0) {
-		$compskip += $$cLayer{'size'};
-	}
-}
-my $compremain = $$compute{'size'} - $compskip;
-$$compute{'estSize'} = $compremain;
-print STDERR "skipping compute $compskip (remain: $compremain)\n";
+$$compute{'estSize'} = $$compute{'size'};
 
-delete $$appserver{'layers'};
-delete $$dbserver{'layers'};
 delete $$compute{'layers'};
-my %finalImages = ( 'dbserver' => $dbserver, 'appserver' => $appserver, 'compute' => $compute);
+my %finalImages = ( 'combined' => $compute);
 
 #my $version = time2str("%Y%m%d01", time);
 my $dtFormatter = DateTime::Format::RFC3339->new();

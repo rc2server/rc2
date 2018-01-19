@@ -35,7 +35,7 @@ RUN (cd /rc2compute/RInside && R CMD INSTALL -l /usr/local/lib/R/site-library .)
 	&& mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \
 	ln -s /usr/local/lib/R/site-library/RInside/libs/RInside.so RInside.so
 
-RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-4.0-release/ubuntu1604/swift-4.0-RELEASE/swift-4.0-RELEASE-ubuntu16.04.tar.gz | tar --strip 1 -zx 
+RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-4.0.3-release/ubuntu1604/swift-4.0.3-RELEASE/swift-4.0.3-RELEASE-ubuntu16.04.tar.gz | tar --strip 1 -zx 
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 
 RUN mkdir -p /rc2/pgdata; chown -R postgres /rc2; chmod 700 /rc2 /rc2/pgdata

@@ -2,12 +2,18 @@ This is the code used to build imageInfo.json, which provides the client app wit
 
 It requires the following CPAN modules:
 
-* Date::Format
+* DateTime::Format::RCF3339
 * Getopt::Long
 * Digest::SHA
 * LWP::Simple
 * LWP::Protocol::http::SocketUnixAlt
 * Cpanel::JSON::XS
+
+if `plenv` is installed, it looks for perl 5.23.4.
+
+install all modules with `cpan install DateTime::Format::RFC3339 Getopt::Long Digest::SHA LWP::Simple LWP::Protocol::http::SocketUnixAlt Cpanel::JSON::XS`
+
+current cmd line options are `parser.pl -s 0.5.8 | bbjson`
 
 Image versions are supplied as command line options, `parser.pl -d 0.4.3 -a 0.4.3 -c 0.4.2.
 

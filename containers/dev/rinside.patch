@@ -59,7 +59,7 @@ diff -Naur RInside/src/RInside.cpp RInside2/src/RInside.cpp
 +            if (errorOccurred) {
 +                if (verbose_m) Rf_warning("%s: Error in evaluating R code (%d)\n", programName, status);
 +                result = PE_EXEC_ERROR;
-+            } else if (verbose_m) {
++            } else if (verbose_m && Rf_isNull(ans) == 0) {
 +                Rf_PrintValue(ans);
 +            }
 +        }

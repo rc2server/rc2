@@ -15,7 +15,7 @@ install all modules with `cpan install DateTime::Format::RFC3339 Getopt::Long Di
 
 current cmd line options are `parser.pl -s 0.5.8 | bbjson`
 
-Image versions are supplied as command line options, `parser.pl -d 0.4.3 -a 0.4.3 -c 0.4.2.
+Previously, Image versions are supplied as command line options, `parser.pl -d 0.4.3 -a 0.4.3 -c 0.4.2.
 
 The generated array contains a version string (serialized date) and an array of images. Each image contains:
 

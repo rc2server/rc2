@@ -1,6 +1,31 @@
-diff -Naur RInside/inst/include/RInside.h RInside2/inst/include/RInside.h
+diff -Naur RInside/inst/include/RInsideCommon.h RInside.fixed/inst/include/RInsideCommon.h
+--- RInside/inst/include/RInsideCommon.h	2015-05-16 11:30:33.000000000 -0400
++++ RInside.fixed/inst/include/RInsideCommon.h	2018-05-07 13:34:09.517332379 -0400
+@@ -47,7 +47,9 @@
+ #ifndef WIN32
+   // needed to turn-off stack checking, and we already have uintptr_t
+   #define CSTACK_DEFNS
+-  #define HAVE_UINTPTR_T
++	#ifndef HAVE_UINTPTR_T
++	#define HAVE_UINTPTR_T
++	#endif
+ #endif
+ 
+ #include <Rembedded.h>
+diff -Naur RInside/inst/include/RInsideConfig.h RInside.fixed/inst/include/RInsideConfig.h
+--- RInside/inst/include/RInsideConfig.h	2013-12-27 19:38:48.000000000 -0500
++++ RInside.fixed/inst/include/RInsideConfig.h	2018-05-07 10:43:21.694778724 -0400
+@@ -21,6 +21,6 @@
+ #define RINSIDE_RINSIDECONFIG_H
+ 
+ // uncomment to turn on the experimental callbacks
+-// #define RINSIDE_CALLBACKS
++#define RINSIDE_CALLBACKS
+ 
+ #endif
+diff -Naur RInside/inst/include/RInside.h RInside.fixed/inst/include/RInside.h
 --- RInside/inst/include/RInside.h	2014-02-10 12:32:43.000000000 -0500
-+++ RInside2/inst/include/RInside.h	2016-08-02 13:13:17.000000000 -0400
++++ RInside.fixed/inst/include/RInside.h	2018-05-07 10:49:51.000000000 -0400
 @@ -68,6 +68,18 @@
  	    Rcpp::RObject x;
  	};
@@ -15,34 +40,24 @@ diff -Naur RInside/inst/include/RInside.h RInside2/inst/include/RInside.h
 +	};
 +
 +	//version that does not silently ignore incomplete parses
-+	ParseEvalResult parseEvalR(const std::string &line, SEXP &ans);
++	ParseEvalResult parseEvalR(const std::string &line, SEXP &ans, Rcpp::Environment *env = NULL);
 +
      int  parseEval(const std::string &line, SEXP &ans); // parse line, return in ans; error code rc
      void parseEvalQ(const std::string &line);			// parse line, no return (throws on error)
      void parseEvalQNT(const std::string &line);			// parse line, no return (no throw)
-diff -Naur RInside/inst/include/RInsideConfig.h RInside2/inst/include/RInsideConfig.h
---- RInside/inst/include/RInsideConfig.h	2013-12-27 19:38:48.000000000 -0500
-+++ RInside2/inst/include/RInsideConfig.h	2016-08-04 10:37:15.000000000 -0400
-@@ -21,6 +21,6 @@
- #define RINSIDE_RINSIDECONFIG_H
- 
- // uncomment to turn on the experimental callbacks
--// #define RINSIDE_CALLBACKS
-+#define RINSIDE_CALLBACKS
- 
- #endif
-diff -Naur RInside/src/RInside.cpp RInside2/src/RInside.cpp
+diff -Naur RInside/src/RInside.cpp RInside.fixed/src/RInside.cpp
 --- RInside/src/RInside.cpp	2015-05-20 08:59:06.000000000 -0400
-+++ RInside2/src/RInside.cpp	2016-08-04 10:22:06.000000000 -0400
-@@ -308,6 +308,57 @@
++++ RInside.fixed/src/RInside.cpp	2018-05-07 10:49:42.000000000 -0400
+@@ -308,6 +308,58 @@
      }
  }
  
-+RInside::ParseEvalResult RInside::parseEvalR(const std::string &line, SEXP &ans) {
++RInside::ParseEvalResult RInside::parseEvalR(const std::string &line, SEXP &ans, Rcpp::Environment *env) {
 +    ParseStatus status;
 +    SEXP cmdSexp, cmdexpr = R_NilValue;
 +    int i, errorOccurred;
 +    ParseEvalResult result = PE_SUCCESS;
++	Rcpp::Environment *theEnv  = env == NULL ? RInside::global_env_m : env;
 +
 +    mb_m.add((char*)line.c_str());
 +
@@ -55,7 +70,7 @@ diff -Naur RInside/src/RInside.cpp RInside2/src/RInside.cpp
 +    case PARSE_OK:
 +        // Loop is needed here as EXPSEXP might be of length > 1
 +        for(i = 0; i < Rf_length(cmdexpr); i++){
-+            ans = R_tryEval(VECTOR_ELT(cmdexpr, i), *global_env_m, &errorOccurred);
++            ans = R_tryEval(VECTOR_ELT(cmdexpr, i), *theEnv, &errorOccurred);
 +            if (errorOccurred) {
 +                if (verbose_m) Rf_warning("%s: Error in evaluating R code (%d)\n", programName, status);
 +                result = PE_EXEC_ERROR;

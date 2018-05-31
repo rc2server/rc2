@@ -2,27 +2,28 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.6.3
+-- Dumped by pg_dump version 9.6.3
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 SET search_path = public, pg_catalog;
 
 ALTER TABLE IF EXISTS ONLY public.sessionrecord DROP CONSTRAINT IF EXISTS sessionrecord_wspace_fk;
 ALTER TABLE IF EXISTS ONLY public.sessionimage DROP CONSTRAINT IF EXISTS sessionimage_sessionrec_fk;
 ALTER TABLE IF EXISTS ONLY public.rcworkspacedata DROP CONSTRAINT IF EXISTS rcworkspacedata_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_userid_fkey;
 ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_projectid_fkey;
-ALTER TABLE IF EXISTS ONLY public.rcuser DROP CONSTRAINT IF EXISTS rcuser_ldapid_fkey;
 ALTER TABLE IF EXISTS ONLY public.rcproject DROP CONSTRAINT IF EXISTS rcproject_userid_fkey;
 ALTER TABLE IF EXISTS ONLY public.rcfiledata DROP CONSTRAINT IF EXISTS rcfiledata_file_fk;
 ALTER TABLE IF EXISTS ONLY public.rcfile DROP CONSTRAINT IF EXISTS rcfile_wspaceid_fkey;
-ALTER TABLE IF EXISTS ONLY public.logentry DROP CONSTRAINT IF EXISTS logentry_uaid_fkey;
-ALTER TABLE IF EXISTS ONLY public.logentry DROP CONSTRAINT IF EXISTS logentry_appid_fkey;
-ALTER TABLE IF EXISTS ONLY public.crashdata DROP CONSTRAINT IF EXISTS crashdata_userid_fkey;
+ALTER TABLE IF EXISTS ONLY public.logintoken DROP CONSTRAINT IF EXISTS logintoken_userid_fkey;
 DROP TRIGGER IF EXISTS rcworkspace_update_version ON public.rcworkspace;
 DROP TRIGGER IF EXISTS rcworkspace_update_lastmod ON public.rcworkspace;
 DROP TRIGGER IF EXISTS rcuser_update_version ON public.rcuser;
@@ -32,7 +33,6 @@ DROP TRIGGER IF EXISTS rcproject_update_lastmod ON public.rcproject;
 DROP TRIGGER IF EXISTS rcfile_trigger_notifyu ON public.rcfile;
 DROP TRIGGER IF EXISTS rcfile_trigger_notifyi ON public.rcfile;
 DROP TRIGGER IF EXISTS rcfile_trigger_notifyd ON public.rcfile;
-DROP INDEX IF EXISTS public.tokens_idx;
 DROP INDEX IF EXISTS public.sessionimage_sessionrec_idx;
 DROP INDEX IF EXISTS public.rcuser_login_idx;
 DROP INDEX IF EXISTS public.rcuser_email_idx;
@@ -43,19 +43,11 @@ ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworksp
 ALTER TABLE IF EXISTS ONLY public.rcworkspace DROP CONSTRAINT IF EXISTS rcworkspace_pkey;
 ALTER TABLE IF EXISTS ONLY public.rcuser DROP CONSTRAINT IF EXISTS rcuser_pkey;
 ALTER TABLE IF EXISTS ONLY public.rcuser DROP CONSTRAINT IF EXISTS rcuser_login_unique;
-ALTER TABLE IF EXISTS ONLY public.rctemplate DROP CONSTRAINT IF EXISTS rctemplate_pkey;
-ALTER TABLE IF EXISTS ONLY public.rctemplate DROP CONSTRAINT IF EXISTS rctemplate_name_key;
 ALTER TABLE IF EXISTS ONLY public.rcproject DROP CONSTRAINT IF EXISTS rcproject_pkey;
-ALTER TABLE IF EXISTS ONLY public.rcnoance DROP CONSTRAINT IF EXISTS rcnoance_pkey;
 ALTER TABLE IF EXISTS ONLY public.rcfiledata DROP CONSTRAINT IF EXISTS rcfiledata_pkey;
 ALTER TABLE IF EXISTS ONLY public.rcfile DROP CONSTRAINT IF EXISTS rcfile_pkey;
-ALTER TABLE IF EXISTS ONLY public.logua DROP CONSTRAINT IF EXISTS logua_pkey;
-ALTER TABLE IF EXISTS ONLY public.logintokens DROP CONSTRAINT IF EXISTS logintokens_pkey;
-ALTER TABLE IF EXISTS ONLY public.logentry DROP CONSTRAINT IF EXISTS logentry_pkey;
-ALTER TABLE IF EXISTS ONLY public.logapp DROP CONSTRAINT IF EXISTS logapp_pkey;
-ALTER TABLE IF EXISTS ONLY public.ldapserver DROP CONSTRAINT IF EXISTS ldapserver_pkey;
-ALTER TABLE IF EXISTS ONLY public.crashdata DROP CONSTRAINT IF EXISTS crashdata_pkey;
-DROP TABLE IF EXISTS public.metadata;
+ALTER TABLE IF EXISTS ONLY public.metadata DROP CONSTRAINT IF EXISTS metadata_pkey;
+ALTER TABLE IF EXISTS ONLY public.logintoken DROP CONSTRAINT IF EXISTS logintoken_pkey;
 DROP TABLE IF EXISTS public.sessionrecord;
 DROP SEQUENCE IF EXISTS public.sessionrecord_seq;
 DROP TABLE IF EXISTS public.sessionimage;
@@ -65,32 +57,66 @@ DROP TABLE IF EXISTS public.rcworkspace;
 DROP SEQUENCE IF EXISTS public.rcworkspace_seq;
 DROP TABLE IF EXISTS public.rcuser;
 DROP SEQUENCE IF EXISTS public.rcuser_seq;
-DROP TABLE IF EXISTS public.rctemplate;
-DROP SEQUENCE IF EXISTS public.rctemplate_seq;
 DROP TABLE IF EXISTS public.rcproject;
 DROP SEQUENCE IF EXISTS public.rcproject_seq;
-DROP TABLE IF EXISTS public.rcnoance;
-DROP SEQUENCE IF EXISTS public.rcnoance_seq;
 DROP TABLE IF EXISTS public.rcfiledata;
 DROP TABLE IF EXISTS public.rcfile;
 DROP SEQUENCE IF EXISTS public.rcfile_seq;
-DROP TABLE IF EXISTS public.logua;
-DROP SEQUENCE IF EXISTS public.logua_seq;
-DROP TABLE IF EXISTS public.logintokens;
-DROP SEQUENCE IF EXISTS public.logintokens_seq;
-DROP TABLE IF EXISTS public.logentry;
-DROP SEQUENCE IF EXISTS public.logentry_seq;
-DROP TABLE IF EXISTS public.logapp;
-DROP SEQUENCE IF EXISTS public.logapp_seq;
-DROP TABLE IF EXISTS public.ldapserver;
-DROP TABLE IF EXISTS public.crashdata;
-DROP SEQUENCE IF EXISTS public.crashdata_seq;
+DROP TABLE IF EXISTS public.metadata;
+DROP TABLE IF EXISTS public.logintoken;
+DROP SEQUENCE IF EXISTS public.logintoken_seq;
 DROP FUNCTION IF EXISTS public.update_version_column();
 DROP FUNCTION IF EXISTS public.update_lastmodified_column();
 DROP FUNCTION IF EXISTS public.rcfile_notifyu();
 DROP FUNCTION IF EXISTS public.rcfile_notifyi();
 DROP FUNCTION IF EXISTS public.rcfile_notifyd();
 DROP FUNCTION IF EXISTS public.rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying);
+DROP EXTENSION IF EXISTS pgcrypto;
+DROP EXTENSION IF EXISTS plpgsql;
+DROP SCHEMA IF EXISTS public;
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA public;
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+SET search_path = public, pg_catalog;
 
 --
 -- Name: rc2createuser(character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
@@ -184,36 +210,12 @@ BEGIN
 END;
 $$;
 
---
--- Name: metadata; Type: TABLE; Schema: public; Owner: rc2; Tablespace: 
---
-
-CREATE TABLE metadata (
-    key character varying(200) NOT NULL,
-    valuestr character(200),
-    valueint integer
-);
 
 --
--- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: rc2
+-- Name: logintoken_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-insert into metadata (key, valueint) values ('sqlSchemaVersion', 2);
-
-
---
--- Name: metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: rc2; Tablespace: 
---
-
-ALTER TABLE ONLY metadata
-    ADD CONSTRAINT metadata_pkey PRIMARY KEY (key);
-
-
---
--- Name: crashdata_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE crashdata_seq
+CREATE SEQUENCE logintoken_seq
     START WITH 100
     INCREMENT BY 1
     NO MINVALUE
@@ -226,113 +228,25 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: crashdata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: logintoken; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE crashdata (
-    id integer DEFAULT nextval('crashdata_seq'::regclass) NOT NULL,
-    userid integer,
-    reportdate timestamp without time zone DEFAULT now() NOT NULL,
-    crashdata bytea
-);
-
-
---
--- Name: logapp_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE logapp_seq
-    START WITH 100
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: logapp; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE logapp (
-    id integer DEFAULT nextval('logapp_seq'::regclass) NOT NULL,
-    name character varying(40) NOT NULL,
-    apikey character varying(40) NOT NULL
-);
-
-
---
--- Name: logentry_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE logentry_seq
-    START WITH 1000
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: logentry; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE logentry (
-    id integer DEFAULT nextval('logentry_seq'::regclass) NOT NULL,
-    appid integer NOT NULL,
-    uaid integer,
-    clientidentifier character varying(80),
-    datereceived timestamp without time zone DEFAULT now() NOT NULL,
-    level integer,
-    context integer,
-    versionstr character varying(60),
-    message character varying(1024)
-);
-
-
---
--- Name: logintokens_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE logintokens_seq
-    START WITH 100
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: logintokens; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE logintokens (
-    id integer DEFAULT nextval('logintokens_seq'::regclass) NOT NULL,
-    datecreated timestamp without time zone DEFAULT now() NOT NULL,
+CREATE TABLE logintoken (
+    id integer DEFAULT nextval('logintoken_seq'::regclass) NOT NULL,
     userid integer NOT NULL,
-    series_ident bigint NOT NULL,
-    token_ident bigint NOT NULL
+    datecreated timestamp without time zone DEFAULT now() NOT NULL,
+    valid boolean DEFAULT true NOT NULL
 );
 
 
 --
--- Name: logua_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: metadata; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE logua_seq
-    START WITH 100
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: logua; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE logua (
-    id integer DEFAULT nextval('logua_seq'::regclass) NOT NULL,
-    uastring character varying(200) NOT NULL
+CREATE TABLE metadata (
+    key character varying(200) NOT NULL,
+    valuestr character(200),
+    valueint integer
 );
 
 
@@ -349,7 +263,7 @@ CREATE SEQUENCE rcfile_seq
 
 
 --
--- Name: rcfile; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rcfile; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE rcfile (
@@ -359,43 +273,17 @@ CREATE TABLE rcfile (
     datecreated timestamp without time zone DEFAULT now() NOT NULL,
     lastmodified timestamp without time zone DEFAULT now() NOT NULL,
     version integer DEFAULT 0 NOT NULL,
-    filesize integer,
-    objtype character varying(10) DEFAULT 'file'::character varying
+    filesize integer
 );
 
 
 --
--- Name: rcfiledata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rcfiledata; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE rcfiledata (
     id integer NOT NULL,
     bindata bytea
-);
-
-
---
--- Name: rcnoance_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE rcnoance_seq
-    START WITH 10
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: rcnoance; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE rcnoance (
-    id integer DEFAULT nextval('rcnoance_seq'::regclass) NOT NULL,
-    userid integer NOT NULL,
-    requesttime timestamp without time zone NOT NULL,
-    action character varying(30) NOT NULL,
-    noance character varying(100) NOT NULL
 );
 
 
@@ -412,7 +300,7 @@ CREATE SEQUENCE rcproject_seq
 
 
 --
--- Name: rcproject; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rcproject; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE rcproject (
@@ -422,29 +310,6 @@ CREATE TABLE rcproject (
     version integer DEFAULT 1 NOT NULL,
     datecreated timestamp without time zone DEFAULT now() NOT NULL,
     lastaccess timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: rctemplate_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE rctemplate_seq
-    START WITH 10
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: rctemplate; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE rctemplate (
-    id integer DEFAULT nextval('rctemplate_seq'::regclass) NOT NULL,
-    name character varying(20) NOT NULL,
-    content text
 );
 
 
@@ -461,7 +326,7 @@ CREATE SEQUENCE rcuser_seq
 
 
 --
--- Name: rcuser; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rcuser; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE rcuser (
@@ -491,7 +356,7 @@ CREATE SEQUENCE rcworkspace_seq
 
 
 --
--- Name: rcworkspace; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rcworkspace; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE rcworkspace (
@@ -507,7 +372,7 @@ CREATE TABLE rcworkspace (
 
 
 --
--- Name: rcworkspacedata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: rcworkspacedata; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE rcworkspacedata (
@@ -529,7 +394,7 @@ CREATE SEQUENCE sessionimage_seq
 
 
 --
--- Name: sessionimage; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: sessionimage; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE sessionimage (
@@ -556,7 +421,7 @@ CREATE SEQUENCE sessionrecord_seq
 
 
 --
--- Name: sessionrecord; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: sessionrecord; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE sessionrecord (
@@ -568,47 +433,23 @@ CREATE TABLE sessionrecord (
 
 
 --
--- Name: crashdata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: logintoken logintoken_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY crashdata
-    ADD CONSTRAINT crashdata_pkey PRIMARY KEY (id);
-
-
---
--- Name: logapp_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY logapp
-    ADD CONSTRAINT logapp_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY logintoken
+    ADD CONSTRAINT logintoken_pkey PRIMARY KEY (id);
 
 
 --
--- Name: logentry_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: metadata metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY logentry
-    ADD CONSTRAINT logentry_pkey PRIMARY KEY (id);
-
-
---
--- Name: logintokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY logintokens
-    ADD CONSTRAINT logintokens_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY metadata
+    ADD CONSTRAINT metadata_pkey PRIMARY KEY (key);
 
 
 --
--- Name: logua_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY logua
-    ADD CONSTRAINT logua_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcfile_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcfile rcfile_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcfile
@@ -616,7 +457,7 @@ ALTER TABLE ONLY rcfile
 
 
 --
--- Name: rcfiledata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcfiledata rcfiledata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcfiledata
@@ -624,15 +465,7 @@ ALTER TABLE ONLY rcfiledata
 
 
 --
--- Name: rcnoance_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY rcnoance
-    ADD CONSTRAINT rcnoance_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcproject_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcproject rcproject_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcproject
@@ -640,23 +473,7 @@ ALTER TABLE ONLY rcproject
 
 
 --
--- Name: rctemplate_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY rctemplate
-    ADD CONSTRAINT rctemplate_name_key UNIQUE (name);
-
-
---
--- Name: rctemplate_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY rctemplate
-    ADD CONSTRAINT rctemplate_pkey PRIMARY KEY (id);
-
-
---
--- Name: rcuser_login_unique; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcuser rcuser_login_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcuser
@@ -664,7 +481,7 @@ ALTER TABLE ONLY rcuser
 
 
 --
--- Name: rcuser_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcuser rcuser_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcuser
@@ -672,7 +489,7 @@ ALTER TABLE ONLY rcuser
 
 
 --
--- Name: rcworkspace_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcworkspace rcworkspace_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcworkspace
@@ -680,7 +497,7 @@ ALTER TABLE ONLY rcworkspace
 
 
 --
--- Name: rcworkspace_uniqueid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcworkspace rcworkspace_uniqueid_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcworkspace
@@ -688,7 +505,7 @@ ALTER TABLE ONLY rcworkspace
 
 
 --
--- Name: rcworkspacedata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: rcworkspacedata rcworkspacedata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcworkspacedata
@@ -696,7 +513,7 @@ ALTER TABLE ONLY rcworkspacedata
 
 
 --
--- Name: sessionimage_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: sessionimage sessionimage_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sessionimage
@@ -704,7 +521,7 @@ ALTER TABLE ONLY sessionimage
 
 
 --
--- Name: sessionrecord_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: sessionrecord sessionrecord_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sessionrecord
@@ -712,122 +529,99 @@ ALTER TABLE ONLY sessionrecord
 
 
 --
--- Name: rcuser_email_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: rcuser_email_idx; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX rcuser_email_idx ON rcuser USING btree (email);
 
 
 --
--- Name: rcuser_login_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: rcuser_login_idx; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX rcuser_login_idx ON rcuser USING btree (login);
 
 
 --
--- Name: sessionimage_sessionrec_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: sessionimage_sessionrec_idx; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX sessionimage_sessionrec_idx ON sessionimage USING btree (sessionid);
 
 
 --
--- Name: tokens_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX tokens_idx ON logintokens USING btree (userid, series_ident);
-
-
---
--- Name: rcfile_trigger_notifyd; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcfile rcfile_trigger_notifyd; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcfile_trigger_notifyd AFTER DELETE ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyd();
 
 
 --
--- Name: rcfile_trigger_notifyi; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcfile rcfile_trigger_notifyi; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcfile_trigger_notifyi AFTER INSERT ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyi();
 
 
 --
--- Name: rcfile_trigger_notifyu; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcfile rcfile_trigger_notifyu; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcfile_trigger_notifyu AFTER UPDATE ON rcfile FOR EACH ROW EXECUTE PROCEDURE rcfile_notifyu();
 
 
 --
--- Name: rcproject_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcproject rcproject_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcproject_update_lastmod BEFORE UPDATE ON rcproject FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
 
 
 --
--- Name: rcproject_update_version; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcproject rcproject_update_version; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcproject_update_version BEFORE UPDATE ON rcproject FOR EACH ROW EXECUTE PROCEDURE update_version_column();
 
 
 --
--- Name: rcuser_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcuser rcuser_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcuser_update_lastmod BEFORE UPDATE ON rcuser FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
 
 
 --
--- Name: rcuser_update_version; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcuser rcuser_update_version; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcuser_update_version BEFORE UPDATE ON rcuser FOR EACH ROW EXECUTE PROCEDURE update_version_column();
 
 
 --
--- Name: rcworkspace_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcworkspace rcworkspace_update_lastmod; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcworkspace_update_lastmod BEFORE UPDATE ON rcworkspace FOR EACH ROW EXECUTE PROCEDURE update_lastmodified_column();
 
 
 --
--- Name: rcworkspace_update_version; Type: TRIGGER; Schema: public; Owner: -
+-- Name: rcworkspace rcworkspace_update_version; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER rcworkspace_update_version BEFORE UPDATE ON rcworkspace FOR EACH ROW EXECUTE PROCEDURE update_version_column();
 
 
 --
--- Name: crashdata_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: logintoken logintoken_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY crashdata
-    ADD CONSTRAINT crashdata_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: logentry_appid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY logentry
-    ADD CONSTRAINT logentry_appid_fkey FOREIGN KEY (appid) REFERENCES logapp(id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE ONLY logintoken
+    ADD CONSTRAINT logintoken_userid_fkey FOREIGN KEY (userid) REFERENCES rcuser(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
--- Name: logentry_uaid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY logentry
-    ADD CONSTRAINT logentry_uaid_fkey FOREIGN KEY (uaid) REFERENCES logua(id) DEFERRABLE INITIALLY DEFERRED;
-
-
---
--- Name: rcfile_wspaceid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: rcfile rcfile_wspaceid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcfile
@@ -835,7 +629,7 @@ ALTER TABLE ONLY rcfile
 
 
 --
--- Name: rcfiledata_file_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: rcfiledata rcfiledata_file_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcfiledata
@@ -843,7 +637,7 @@ ALTER TABLE ONLY rcfiledata
 
 
 --
--- Name: rcproject_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: rcproject rcproject_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcproject
@@ -851,7 +645,7 @@ ALTER TABLE ONLY rcproject
 
 
 --
--- Name: rcworkspace_projectid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: rcworkspace rcworkspace_projectid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcworkspace
@@ -859,7 +653,7 @@ ALTER TABLE ONLY rcworkspace
 
 
 --
--- Name: rcworkspacedata_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: rcworkspacedata rcworkspacedata_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY rcworkspacedata
@@ -867,7 +661,7 @@ ALTER TABLE ONLY rcworkspacedata
 
 
 --
--- Name: sessionimage_sessionrec_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sessionimage sessionimage_sessionrec_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sessionimage
@@ -875,7 +669,7 @@ ALTER TABLE ONLY sessionimage
 
 
 --
--- Name: sessionrecord_wspace_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sessionrecord sessionrecord_wspace_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sessionrecord

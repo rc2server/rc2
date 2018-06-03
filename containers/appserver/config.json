@@ -1,6 +1,6 @@
 {
-	"dbHost": "localhost",
-	"computeHost": "localhost",
+	"dbHost": "dbserver",
+	"computeHost": "compute",
 	"computeTimeout": 4,
-	"computeDbHost": "localhost"
+	"computeDbHost": "dbserver"
 }

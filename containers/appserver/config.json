@@ -1,6 +1,7 @@
 {
-	"dbHost": "dbserver",
+	"dbHost": "pgset-primary",
 	"computeHost": "compute",
 	"computeTimeout": 4,
-	"computeDbHost": "dbserver"
+	"computeDbHost": "pgset-primary",
+	"initialLogLevel": 4
 }

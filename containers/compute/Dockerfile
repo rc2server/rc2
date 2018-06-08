@@ -9,7 +9,7 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
 	&& apt-get update \
 	&& apt-get install -y alien build-essential xorg-dev libtiff5-dev libcairo2-dev libbz2-dev libcurl4-openssl-dev \
-		libssl-dev gfortran libreadline-dev pandoc wget perl postgresql-client-9.4 libgoogle-glog-dev \
+		libssl-dev gfortran libreadline-dev pandoc wget perl postgresql-client-9.6 libgoogle-glog-dev \
 	&& apt-get clean
 
 RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean

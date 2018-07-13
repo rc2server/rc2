@@ -1,0 +1,21 @@
+[Unit]
+Description=etcd
+
+[Service]
+Type=notify
+ExecStart=/opt/etcd/etcd --name <MYNAME> \
+  --data-dir /var/lib/etcd \
+  --listen-client-urls "http://<MYIP>:2379,http://localhost:2379" \
+  --advertise-client-urls "http://<MYIP>:2379" \
+  --listen-peer-urls "http://<MYIP>:2380" \
+  --initial-cluster "<NAME1>=http://<IP1>:2380,<NAME2>=http://<IP2>:2380,<NAME3>=http://<IP3>:2380" \
+  --initial-advertise-peer-urls "http://<MYIP>:2380" \
+  --heartbeat-interval 200 \
+  --election-timeout 5000
+Restart=always
+RestartSec=5
+TimeoutStartSec=0
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

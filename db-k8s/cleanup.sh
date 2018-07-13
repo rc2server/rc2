@@ -18,7 +18,7 @@ CCP_NAMESPACE="default"
 source common.sh
 echo_info "Cleaning up.."
 
-${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} rc2pgdb rc2pgdb
+${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} statefulset rc2pgdb
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} sa rc2pgdb-sa
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} clusterrolebinding rc2pgdb-sa
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pvc rc2pgdb-pgdata
@@ -28,3 +28,4 @@ fi
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} service rc2pgdb rc2pgdb-primary rc2pgdb-replica
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pod rc2pgdb-0 rc2pgdb-1
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} configmap rc2pgdb-pgconf
+${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} secret rc2pgdb-secret

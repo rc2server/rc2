@@ -47,4 +47,5 @@ ${CCP_CLI?} create --namespace=${CCP_NAMESPACE?} configmap rc2pgdb-pgconf \
     --from-file ${DIR?}/configs/pre-start-hook.sh \
     --from-file ${DIR?}/configs/post-start-hook.sh
 
+${CCP_CLI?} create --namespace=${CCP_NAMESPACE?} -f $DIR/secrets.json
 ${CCP_CLI?} create --namespace=${CCP_NAMESPACE?} -f $DIR/deployment.json

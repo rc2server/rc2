@@ -236,7 +236,7 @@
                                         "name": "rc2pgdb-secret"
                                     }
                                 }
-                            }
+                            },
                             {
                             	"name": "PGDATA_PATH_OVERRIDE",
                             	"value": "rc2-data"

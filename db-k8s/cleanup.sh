@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source ${CCPROOT}/examples/common.sh
+CCP_CLI=kubectl
+CCP_NAMESPACE="default"
+
+source common.sh
 echo_info "Cleaning up.."
 
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} rc2pgdb rc2pgdb

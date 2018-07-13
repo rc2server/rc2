@@ -1,0 +1,279 @@
+{
+  "apiVersion": "v1",
+  "kind": "ServiceAccount",
+  "metadata": {
+    "name": "rc2pgdb-sa"
+  }
+}
+
+{
+    "kind": "PersistentVolumeClaim",
+    "apiVersion": "v1",
+    "metadata": {
+      "name": "rc2pgdb-pgdata"
+    },
+    "spec": {
+      "accessModes": [
+        "ReadWriteOnce"
+      ],
+      "storageClassName": "openebs-standard",
+      "resources": {
+        "requests": {
+          "storage": "$400M"
+        }
+      }
+    }
+}
+
+{
+    "apiVersion": "v1",
+    "kind": "Secret",
+    "type": "Opaque",
+    "metadata": {
+        "name": "rc2pgdb-secret"
+    },
+    "stringData": {
+        "PG_USER": "rc2s",
+        "PG_DATABASE": "rc2",
+        "PG_PASSWORD": "rc2",
+        "PG_PRIMARY_USER": "rc2",
+        "PG_PRIMARY_PASSWORD": "rc2",
+        "PG_ROOT_PASSWORD": "rc2root"
+    }
+}
+
+{
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+        "name": "rc2pgdb",
+        "labels": {
+            "app": "rc2pgdb"
+        }
+    },
+    "spec": {
+        "ports": [
+            {
+                "port": 5432,
+                "name": "web"
+            }
+        ],
+        "clusterIP": "None",
+        "selector": {
+            "app": "rc2pgdb"
+        }
+    }
+}
+
+{
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "rc2pgdb-primary",
+        "labels": {
+            "name": "rc2pgdb-primary"
+        }
+    },
+    "spec": {
+        "ports": [
+            {
+                "protocol": "TCP",
+                "port": 5432,
+                "targetPort": 5432,
+                "nodePort": 0
+            }
+        ],
+        "selector": {
+            "name": "rc2pgdb-primary"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+    }
+}
+
+{
+    "kind": "Service",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "rc2pgdb-replica",
+        "labels": {
+            "name": "rc2pgdb-replica"
+        }
+    },
+    "spec": {
+        "ports": [
+            {
+                "protocol": "TCP",
+                "port": 5432,
+                "targetPort": 5432,
+                "nodePort": 0
+            }
+        ],
+        "selector": {
+            "name": "rc2pgdb-replica"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+    }
+}
+
+{
+    "apiVersion": "apps/v1beta1",
+    "kind": "rc2pgdb",
+    "metadata": {
+        "name": "rc2pgdb"
+    },
+    "spec": {
+        "serviceName": "rc2pgdb",
+        "replicas": 2,
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app": "rc2pgdb"
+                }
+            },
+            "spec": {
+                "serviceAccount": "rc2pgdb-sa",
+                "securityContext": {
+                    ""
+                },
+                "containers": [
+                    {
+                        "name": "rc2pgdb",
+                        "image": "crunchydata/crunchy-postgres-gis:centos7-10.4-1.8.3",
+                        "ports": [
+                            {
+                                "containerPort": 5432,
+                                "name": "postgres"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/opt/cpm/bin/readiness.sh"
+                                ]
+                            },
+                            "initialDelaySeconds": 40,
+                            "timeoutSeconds": 1
+                        },
+                        "livenessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/opt/cpm/bin/liveness.sh"
+                                ]
+                            },
+                            "initialDelaySeconds": 40,
+                            "timeoutSeconds": 1
+                        },
+                        "env": [
+                            {
+                                "name": "PGHOST",
+                                "value": "/tmp"
+                            },
+                            {
+                                "name": "PG_MODE",
+                                "value": "set"
+                            },
+                            {
+                                "name": "PG_PRIMARY_HOST",
+                                "value": "rc2pgdb-primary"
+                            },
+                            {
+                                "name": "PG_REPLICA_HOST",
+                                "value": "rc2pgdb-replica"
+                            },
+                            {
+                                "name": "PG_PRIMARY_PORT",
+                                "value": "5432"
+                            },
+                            {
+                                "name": "PG_USER",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "PG_USER",
+                                        "name": "rc2pgdb-secret"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PG_PASSWORD",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "PG_PASSWORD",
+                                        "name": "rc2pgdb-secret"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PG_PRIMARY_USER",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "PG_PRIMARY_USER",
+                                        "name": "rc2pgdb-secret"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PG_PRIMARY_PASSWORD",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "PG_PRIMARY_PASSWORD",
+                                        "name": "rc2pgdb-secret"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PG_ROOT_PASSWORD",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "PG_ROOT_PASSWORD",
+                                        "name": "rc2pgdb-secret"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PG_DATABASE",
+                                "valueFrom": {
+                                    "secretKeyRef": {
+                                        "key": "PG_DATABASE",
+                                        "name": "rc2pgdb-secret"
+                                    }
+                                }
+                            }
+                            {
+                            	"name": "PGDATA_PATH_OVERRIDE",
+                            	"value": "rc2-data"
+                            }
+                        ],
+                        "volumeMounts": [
+                            {
+                                "name": "pgdata",
+                                "mountPath": "/pgdata",
+                                "readOnly": false
+                            },
+                            {
+                                "mountPath": "/pgconf",
+                                "name": "pgconf",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "volumes": [
+                    {
+                        "name": "pgdata",
+                        "persistentVolumeClaim": {
+                            "claimName": "rc2pgdb-pgdata"
+                        }
+                    },
+                    {
+                        "name": "pgconf",
+                        "configMap": {
+                            "name": "rc2pgdb-pgconf"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

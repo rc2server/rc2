@@ -27,3 +27,4 @@ if [ -z "$CCP_STORAGE_CLASS" ]; then
 fi
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} service rc2pgdb rc2pgdb-primary rc2pgdb-replica
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pod rc2pgdb-0 rc2pgdb-1
+${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} configmap rc2pgdb-pgconf

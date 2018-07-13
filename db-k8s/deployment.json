@@ -119,7 +119,7 @@
 
 {
     "apiVersion": "apps/v1beta1",
-    "kind": "rc2pgdb",
+    "kind": "StatefulSet",
     "metadata": {
         "name": "rc2pgdb"
     },

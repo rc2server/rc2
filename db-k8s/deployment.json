@@ -24,6 +24,25 @@
 }
 
 {
+	"kind": "PersistentVolumeClain",
+	"apiVersion", "v1",
+	  "metadata": {
+		"name": "rc2pgdb-pgdata"
+	  },
+	  "spec": {
+		"accessModes": [
+		  "ReadWriteOnce"
+		],
+		"storageClassName": "openebs-standard",
+		"resources": {
+		  "requests": {
+			"storage": "400M"
+		  }
+		}  
+	  }
+}
+
+{
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": {
@@ -244,9 +263,15 @@
                             "name": "rc2pgdb-pgconf"
                         }
                     }
+                    {
+                        "name": "pgdata",
+                        "persistentVolumeClain": {
+                            "claimName": "rc2pgdb-pgdata"
+                        }
+                    }
                 ]
             }
-        },
+        }
       "volumeClaimTemplates": [
   	    {
   	      "metadata": {
@@ -267,3 +292,5 @@
       ]
     }
 }
+
+	

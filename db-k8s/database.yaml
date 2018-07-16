@@ -1,20 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  - name: rc2pgdb-sa
----
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: rc2pgdb-secret
-stringData:
-  PG_USER: rc2s
-  PG_DATABASE: rc2
-  PG_PASSWORD: rc2
-  PG_PRIMARY_USER: rc2
-  PG_PRIMARY_PASSWORD: rc2
-  PG_ROOT_PASSWORD: rc2root
+  name: rc2pgdb-sa
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -36,9 +23,9 @@ metadata:
     app: rc2pgdb
 spec:
   ports:
-    port: 5432
-    name: web
-  cluserIP: None
+    - port: 5432
+      name: web
+  clusterIP: None
   selector:
     app: rc2pgdb
 ---
@@ -50,10 +37,10 @@ metadata:
     app: rc2pgdb-primary
 spec:
   ports:
-    protocol: TCP
-    port: 5432
-    targetPort: 5432
-    nodePort: 0
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 0
   selector:
     app: rc2pgdb-primary
   type: ClusterIP
@@ -67,24 +54,29 @@ metadata:
     app: rc2pgdb-replica
 spec:
   ports:
-    protocol: TCP
-    port: 5432
-    targetPort: 5432
-    nodePort: 0
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 0
   selector:
     app: rc2pgdb-replica
   type: ClusterIP
   sessionAffinity: None
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
   name: rc2pgdb
 spec:
   serviceName: rc2pgdb
-  replicas: 2
+  selector:
+    matchLabels:
+      app: rc2pgdb
+  replicas: 1
   template: 
-  containers:
+    metadata:
+      labels:
+        app: rc2pgdb
     spec:
       serviceAccount: rc2pgdb-sa
       containers:
@@ -98,15 +90,15 @@ spec:
               command:
                 - /opt/cpm/bin/readiness.sh
             initialDelaySeconds: 40
-            timeOutSeconds: 1
+            timeoutSeconds: 1
           livenessProbe:
             exec:
               command:
                 - /opt/cpm/bin/liveness.sh
             initialDelaySeconds: 40
-            timeOutSeconds: 1
+            timeoutSeconds: 1
           env:
-            - name: "PGHOST"
+            - name: PGHOST
               value: /tmp
             - name: PG_MODE
               value: set
@@ -115,7 +107,7 @@ spec:
             - name: PG_REPLICA_HOST
               value: rcpgdb-replica
             - name: PG_PRIMARY_PORT
-              value: 5432
+              value: "5432"
             - name: PG_USER
               valueFrom:
                 secretKeyRef:
@@ -150,20 +142,13 @@ spec:
             - name: pgconf
               mountPath: /pgconf
               readOnly: true
-    - volumes:
-      - name: pgconf
-        configMap: 
-          name: rc2pgdb-pgconf
-      - name: pgdata
-        persistentVolumeClaim:
-          claimName: rc2pgdb-pgdata
-  VolumeClaimTemplates:
-    - metadata:
-        name: pgdata
-    - spec:
-        accessModes: 
-          - ReadWriteOnce
-        storageClassName: openebs-standard
-        resources:
-          requests:
-            storage: 400M
+  volumeClaimTemplates:
+      - metadata:
+          name: pgdata
+      - spec:
+          accessModes: 
+            - ReadWriteOnce
+          storageClassName: openebs-standard
+          resources:
+            requests:
+              storage: 400M

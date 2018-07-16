@@ -1,7 +1,7 @@
 {
-	"dbHost": "appserver-release",
+	"dbHost": "rc2pgdb",
 	"computeHost": "compute",
 	"computeTimeout": 4,
-	"computeDbHost": "appserver-release",
+	"computeDbHost": "rc2pgdb",
 	"initialLogLevel": 4
 }

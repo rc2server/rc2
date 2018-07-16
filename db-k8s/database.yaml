@@ -27,7 +27,7 @@ spec:
       name: postgres
   clusterIP: None
   selector:
-    app: rc2pgdb-primary
+    app: rc2pgdb
 ---
 apiVersion: v1
 kind: Service
@@ -43,7 +43,6 @@ spec:
       nodePort: 0
   selector:
     app: rc2pgdb
-    rc2type: pgdb
   type: ClusterIP
   sessionAffinity: None
 ---

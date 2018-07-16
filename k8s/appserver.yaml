@@ -25,3 +25,19 @@ spec:
         - name: app-config-volume
           configMap:
             name: appserver-release
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appserver
+  labels:
+    app: appserver-deployment
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8088
+  selector:
+    app: appserver
+  type: ClusterIP
+  sessionAffinity: None

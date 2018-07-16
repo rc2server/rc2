@@ -139,6 +139,12 @@ to connect via terminal:
 	2.  Get the host ip address via `kubectl get svc | grep pgset-primary`
 	3. `psql -U rc2 -h <IP ADDRESS> rc2`
 
+until the appserver supports registration, need to connect to database and create a user:
+
+```
+select rc2createuser('mlilback', 'Mark', 'Lilback', 'mark@lilback.com', '<unencrypted password>');
+```
+
 ## create configmap and deployment for appserver
 
 run:

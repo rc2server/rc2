@@ -1,0 +1,7 @@
+{
+	"dbHost": "appserver-release",
+	"computeHost": "compute",
+	"computeTimeout": 4,
+	"computeDbHost": "appserver-release",
+	"initialLogLevel": 4
+}

@@ -123,6 +123,11 @@ spec:
                 secretKeyRef:
                   key: PG_PRIMARY_USER
                   name: rc2pgdb-secret
+            - name: PG_PRIMARY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PG_PRIMARY_PASSWORD
+                  name: rc2pgdb-secret
             - name: PG_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:

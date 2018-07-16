@@ -21,7 +21,7 @@ echo_info "Cleaning up.."
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} --ignore-not-found statefulset rc2pgdb
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} --ignore-not-found sa rc2pgdb-sa
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} clusterrolebinding rc2pgdb-sa
-${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pvc rc2pgdb-pgdata
+${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pvc rc2pgdata
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pv rc2pgdb-pgdata
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} service rc2pgdb rc2pgdb-primary rc2pgdb-replica
 ${CCP_CLI?} delete --namespace=${CCP_NAMESPACE?} pod rc2pgdb-0 rc2pgdb-1

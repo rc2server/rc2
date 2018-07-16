@@ -6,7 +6,7 @@ metadata:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: rc2pgdb-pgdata
+  name: rc2pgdata
 spec:
   accessModes:
     - ReadWriteOnce
@@ -136,19 +136,16 @@ spec:
             - name: PGDATA_PATH_OVERRIDE
               value: rc2-data
           volumeMounts:
-            - name: pgdata
+            - name: rc2pgdata
               mountPath: /pgdata
               readOnly: false
             - name: pgconf
               mountPath: /pgconf
               readOnly: true
-  volumeClaimTemplates:
-      - metadata:
-          name: pgdata
-      - spec:
-          accessModes: 
-            - ReadWriteOnce
-          storageClassName: openebs-standard
-          resources:
-            requests:
-              storage: 400M
+      volumes:
+        - name: rc2pgdata
+          persistentVolumeClaim:
+            claimName: rc2pgdata
+        - name: pgconf
+          configMap:
+            name: "rc2pgdb-pgconf"

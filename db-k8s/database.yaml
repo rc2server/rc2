@@ -79,6 +79,14 @@ spec:
         app: rc2pgdb
     spec:
       serviceAccount: rc2pgdb-sa
+      initContainers:
+      - name: init-pgperms
+        image: busybox
+        command: ["sh", "-c", "chown -R 26:26 /pgdata"]
+        volumeMounts:
+        - name: rc2pgdata
+          mountPath: /pgdata
+          readOnly: false
       containers:
         - name: rc2pgdb
           image: crunchydata/crunchy-postgres-gis:centos7-10.4-1.8.3

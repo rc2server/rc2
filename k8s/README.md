@@ -152,6 +152,8 @@ this, combined with settings in appserver.yaml will mount the json file in the c
 
 ## ingress
 
-to install run `helm install --name rc2-ingress stable/nginx-ingress`
+to install run `helm install --name rc2-ingress stable/nginx-ingress --set controller.service.type=NodePort --set controller.service.externalIPs={159.203.191.162}` replacing the ip address with the appropriate external address.
 
 place the key in tls.key, the cert (with intermediate after our key) in tls.crt, then run `kubectl create secret tls api-rc2-io-tls --key tls.key --cert tls.crt `
+
+apply appserver-ingress.yaml

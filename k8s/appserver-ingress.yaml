@@ -11,7 +11,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: appserver-service
+              serviceName: appserver
               servicePort: 80
   tls:
     - hosts:

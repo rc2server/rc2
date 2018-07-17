@@ -163,3 +163,7 @@ to install run `helm install --name rc2-ingress stable/nginx-ingress --set contr
 place the key in tls.key, the cert (with intermediate after our key) in tls.crt, then run `kubectl create secret tls api-rc2-io-tls --key tls.key --cert tls.crt `
 
 apply appserver-ingress.yaml
+
+## docker registry
+
+kubectl label nodes c1 rc2role=master

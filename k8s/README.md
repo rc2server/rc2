@@ -166,4 +166,20 @@ apply appserver-ingress.yaml
 
 ## docker registry
 
-kubectl label nodes c1 rc2role=master
+only want to run on a single node, so set a label for filtering. 
+`kubectl label nodes c2 rc2role=registry`
+
+create a directory for storage: `mkdir -p /var/lib/registry/data` on c2.
+
+### creating authentication
+
+```
+docker run --entrypoint htpasswd registry:2 -Bbn rc2 rc2me > passdata
+cat passdata | base64 -w 0
+```
+That code then is placed in the secret in registry.yaml Can make multiple entries in passdata file.
+
+Apply registry.yaml
+
+
+

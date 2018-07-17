@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Secret
+metadata: 
+  name: registry-auth-data
+type: Opaque
+data:
+  htpasswd: cmMyOiQyeSQwNSRCMVRXaEdpWTNTdmtIV3RkbkpyZTkuWUouVUxOd2hWNXFIeVlWbU1YVjRCLzZtVWhmM0s1MgoK
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: registry
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      volumes:
+        - name: registry-storage
+          hostPath:
+            path: /var/lib/registry/data
+        - name: auth-dir
+          secret:
+            secretName: registry-auth-data 
+      nodeSelector:
+        rc2role: registry
+      containers:
+      - name: registry
+        image: registry:2
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+          - name: REGISTRY_HTTP_ADDR
+            value: :5000
+          - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+            value: /var/lib/registry
+          - name: REGISTRY_AUTH_HTPASSWD_REALM
+            value: rc2_realm
+          - name: REGISTRY_AUTH_HTPASSWD_PATH
+            value: /auth/htpasswd
+        ports:
+          - containerPort: 5000
+            name: registry
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /var/lib/registry
+            name: registry-storage
+          - mountPath: /auth
+            name: auth-dir
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+spec:
+  selector:
+    app: registry
+  ports:
+    - port: 5000
+      targetPort: 5000

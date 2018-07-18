@@ -142,7 +142,7 @@ kubectl apply -f devserver.yaml
 
 this, combined with settings in appserver.yaml will mount the json file in the container. It will also create the deployment, and expose it to the world on the specified ip address (which should.be the master node).
 
-to restart the dev version and pull the latest docker image, use `kubectl patch deployment web -p \
+to restart the dev version and pull the latest docker image, use `kubectl patch deployment appserver-dev -p \
   "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}"`
 
 that will update a metadata label with the current/time, which will force the pods to reload.

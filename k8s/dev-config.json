@@ -4,5 +4,6 @@
 	"computeHost": "compute",
 	"computeTimeout": 4,
 	"computeDbHost": "pgset-primary",
-	"initialLogLevel": 4
+	"initialLogLevel": 4,
+	"urlPrefixToIgnore": "/dev"
 }

@@ -13,7 +13,7 @@ spec:
         app: appserver-dev
     spec:
       containers:
-        - image: docker.io/rc2server/appserverdev:latest
+        - image: docker.rc2.io/appserver-dev:latest
           name: rc2appserverdev
           imagePullPolicy: "Always"
           command: [ "/rc2/appserver", "-D", "/rc2/config" ]

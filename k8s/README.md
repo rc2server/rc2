@@ -157,20 +157,16 @@ apply appserver-ingress.yaml
 
 ## docker registry
 
-only want to run on a single node, so set a label for filtering. 
-`kubectl label nodes c2 rc2role=registry`
+run the following to start and keep running a registry. Change the paths as appropriate.
 
-create a directory for storage: `mkdir -p /var/lib/registry/data` on c2.
+```
+docker run -d -p 443:443 --name registry --restart=always -v /var/lib/registry:/var/lib/registry -v /root/docker-certs:/certs -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/tls.crt -e REGISTRY_HTTP_TLS_KEY=/certs/tls.key registry:2
+```
 
 ### creating authentication
 
 ```
-docker run --entrypoint htpasswd registry:2 -Bbn rc2 rc2me > passdata
-cat passdata | base64 -w 0
+docker run --entrypoint htpasswd registry:2 -Bbn <userid> <password> >> htpasswd
 ```
-That code then is placed in the secret in registry.yaml Can make multiple entries in passdata file.
 
-Apply registry.yaml
-
-
-
+Run that in the directory used by the registry (/root/docker-certs in the example) to add a user.

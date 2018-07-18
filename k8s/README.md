@@ -116,28 +116,12 @@ kubectl apply -f openebs/k8s/openebs-storageclasses.yaml
 
 ## install postgres
 
-```
-cd openebs/k8s/demo/crunchy-postgres
-# edit user/passwords/dbname in set.json
-./run.sh
-```
+1. edit secrets.yaml with appropriate values
+2. ./run.sh
+3. create a user with `kubectl exec rc2pgdb-0 -it -- psql -U rc2 -c "select rc2createuser('login', 'FirstName', 'LastName', 'email@domain', 'password');" rc2`
+4. run the same command with `rc2dev` at the end to do the same for the test database.
 
-note that user/passwords are specified in deployment.json and setup.sql
-
-edits to make:
-
-	1. spec:containers:image - add `-gis` to image name
-	2. set PG_PRIMARY_PASSWORD
-	3. set PG_USER to rc2
-	4. set PG_PASSWORD to rc2
-	5. set PG_DATABASE to rc2
-	6. set PG_ROOT_PASSWORD
-
-to connect via terminal:
-
-	1. `docker ps` on each node until find one whose name starts with "k8s_pgset_pgset-0"
-	2.  Get the host ip address via `kubectl get svc | grep pgset-primary`
-	3. `psql -U rc2 -h <IP ADDRESS> rc2`
+to connect via psql, on master run `kubectl exec rc2pgdb-0 -it -- bash`
 
 until the appserver supports registration, need to connect to database and create a user:
 

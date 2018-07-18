@@ -148,6 +148,31 @@ spec:
                   name: rc2pgdb-secret
             - name: PGDATA_PATH_OVERRIDE
               value: rc2-data
+            - name: INITIAL_USER_LOGIN
+              valueFrom:
+                secretKeyRef:
+                  key: INITIAL_USER_LOGIN
+                  name: rc2pgdb-secret
+            - name: INITIAL_USER_FNAME
+              valueFrom:
+                secretKeyRef:
+                  key: INITIAL_USER_FNAME
+                  name: rc2pgdb-secret
+            - name: INITIAL_USER_LNAME
+              valueFrom:
+                secretKeyRef:
+                  key: INITIAL_USER_LNAME
+                  name: rc2pgdb-secret
+            - name: INITIAL_USER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  key: INITIAL_USER_EMAIL
+                  name: rc2pgdb-secret
+            - name: INITIAL_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: INITIAL_USER_PASSWORD
+                  name: rc2pgdb-secret
           volumeMounts:
             - name: rc2pgdata
               mountPath: /pgdata

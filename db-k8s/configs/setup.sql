@@ -629,3 +629,11 @@ ALTER TABLE ONLY sessionimage
 
 ALTER TABLE ONLY sessionrecord
     ADD CONSTRAINT sessionrecord_wspace_fk FOREIGN KEY (wspaceid) REFERENCES rcworkspace(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+select rc2createuser('INIITIAL_USER_LOGIN', 'INIITIAL_USER_FNAME', 'INIITIAL_USER_LNAME', 'INIITIAL_USER_EMAIL', 'INIITIAL_USER_PASSWORD');
+
+/*. create a copy for development purposes */
+\c postgres postgres
+
+create database rc2dev with template rc2 owner rc2;
+

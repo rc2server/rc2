@@ -13,10 +13,6 @@ spec:
             backend:
               serviceName: appserver
               servicePort: 80
-          - path: /dreg
-            backend:
-              serviceName: registry
-              servicePort: 5000
   tls:
     - hosts:
         - api.rc2.io

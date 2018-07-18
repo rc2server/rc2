@@ -1,0 +1,8 @@
+{
+	"dbHost": "pgset-primary",
+	"dbName": "rc2dev",
+	"computeHost": "compute",
+	"computeTimeout": 4,
+	"computeDbHost": "pgset-primary",
+	"initialLogLevel": 4
+}

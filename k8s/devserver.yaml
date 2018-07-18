@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appserver-dev
+spec:
+  selector:
+    matchLabels:
+      app: appserver-dev
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: appserver-dev
+    spec:
+      containers:
+        - image: docker.io/rc2server/appserverdev:latest
+          name: rc2appserverdev
+          imagePullPolicy: "Always"
+          command: [ "/rc2/appserver", "-D", "/rc2/config" ]
+          ports:
+          - containerPort: 8088
+          volumeMounts:
+          - name: app-config-volume
+            mountPath: /rc2/config
+      volumes:
+        - name: app-config-volume
+          configMap:
+            name: appserver-dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appserver-dev
+  labels:
+    app: appserver-dev
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8088
+  selector:
+    app: appserver-dev
+  type: ClusterIP
+  sessionAffinity: None

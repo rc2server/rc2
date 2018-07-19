@@ -1,9 +1,9 @@
 {
-	"dbHost": "pgset-primary",
+	"dbHost": "rc2pgdb-primary",
 	"dbName": "rc2dev",
 	"computeHost": "compute",
 	"computeTimeout": 4,
-	"computeDbHost": "pgset-primary",
+	"computeDbHost": "rc2pgdb-primary",
 	"initialLogLevel": 4,
 	"urlPrefixToIgnore": "/dev"
 }

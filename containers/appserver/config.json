@@ -1,7 +1,7 @@
 {
-	"dbHost": "pgset-primary",
+	"dbHost": "rc2pgdb-primary",
 	"computeHost": "compute",
 	"computeTimeout": 4,
-	"computeDbHost": "pgset-primary",
+	"computeDbHost": "rc2pgdb-primary",
 	"initialLogLevel": 4
 }

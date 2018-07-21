@@ -10,10 +10,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: openebs-standard
+  storageClassName: do-block-storage
   resources:
     requests:
-        storage: 400M
+        storage: 5G
 ---
 apiVersion: v1
 kind: Service

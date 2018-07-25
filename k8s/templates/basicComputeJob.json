@@ -1,0 +1,26 @@
+{
+	"apiVersion": "batch/v1",
+	"kind": "Job",
+	"metadata": {
+		"name": "compute-{{ wspaceId }}",
+		"labels": {
+			"workspace": "{{ wspaceId }}"
+		},
+		"spec": {
+			"backOffLimit": 4,
+			"template": {
+				"spec": {
+					"restartPolicy": "Never",
+					"containers": [{
+						"name": "compute-{{ wspaceId }}",
+						"image": "{{ computeImage }}",
+						"ports": [{
+							"containerPort": 7714
+							}],
+						"command": ["/rc2compute/rserver"]
+					}]
+				}
+			}
+		}
+	}
+}

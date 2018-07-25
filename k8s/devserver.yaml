@@ -22,6 +22,8 @@ spec:
           volumeMounts:
           - name: app-config-volume
             mountPath: /rc2/config
+      imagePullSecrets:
+        - name: regcred
       volumes:
         - name: app-config-volume
           configMap:

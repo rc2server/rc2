@@ -6,5 +6,6 @@
 	"computeDbHost": "rc2pgdb-primary",
 	"initialLogLevel": 4,
 	"urlPrefixToIgnore": "/dev",
-	"computeViaK8s": true
+	"computeViaK8s": true,
+	"k8sStencilPath": "/rc2/rc2root/k8s/templates"
 }

@@ -5,9 +5,9 @@
 		"name": "compute-{{ wspaceId }}",
 		"labels": {
 			"workspace": "{{ wspaceId }}"
+			}
 		},
-		"spec": {
-			"backOffLimit": 4,
+	"spec": {
 			"template": {
 				"spec": {
 					"restartPolicy": "Never",
@@ -22,5 +22,4 @@
 				}
 			}
 		}
-	}
 }

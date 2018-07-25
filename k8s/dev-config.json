@@ -7,5 +7,6 @@
 	"initialLogLevel": 4,
 	"urlPrefixToIgnore": "/dev",
 	"computeViaK8s": true,
-	"k8sStencilPath": "/rc2/rc2root/k8s/templates"
+	"k8sStencilPath": "/rc2/rc2root/k8s/templates",
+	"computeImage": "rc2server/compute:0.6.1"
 }

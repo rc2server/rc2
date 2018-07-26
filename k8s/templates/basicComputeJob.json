@@ -9,6 +9,7 @@
 		},
 	"spec": {
 			"template": {
+			  "metadata": { "labels": { "workspace": "{{ wspaceId }}" } },
 				"spec": {
 					"restartPolicy": "Never",
 					"containers": [{

@@ -20,7 +20,7 @@
 							}],
 						"command": ["/rc2compute/rserver"]
 					}],
-					"imagePullSecrets": { "name": "regcred" }
+					"imagePullSecrets": [{ "name": "regcred" }]
 				}
 			}
 		}

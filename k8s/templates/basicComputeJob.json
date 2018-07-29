@@ -2,18 +2,22 @@
 	"apiVersion": "batch/v1",
 	"kind": "Job",
 	"metadata": {
-		"name": "compute-{{ wspaceId }}",
+		"name": "compute-{{ sessionId }}",
 		"labels": {
-			"workspace": "{{ wspaceId }}"
+			"workspace": "{{ wspaceId }}",
+			"sessionId": "{{ sessionId }}"
 			}
 		},
 	"spec": {
 			"template": {
-			  "metadata": { "labels": { "workspace": "{{ wspaceId }}" } },
+			  "metadata": { "labels": { 
+			    "workspace": "{{ wspaceId }}", 
+			    "sessionId": "{{ sessionId }}" 
+			  }},
 				"spec": {
 					"restartPolicy": "Never",
 					"containers": [{
-						"name": "compute-{{ wspaceId }}",
+						"name": "compute-{{ sessionId }}",
 						"image": "{{ computeImage }}",
 						"ports": [{
 							"containerPort": 7714

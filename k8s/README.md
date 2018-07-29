@@ -170,3 +170,13 @@ docker run --entrypoint htpasswd registry:2 -Bbn <userid> <password> >> htpasswd
 ```
 
 Run that in the directory used by the registry (/root/docker-certs in the example) to add a user.
+
+### storing reg for k8s
+
+run the following to create a regcred secret
+```
+kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
+```
+
+Then add to the spec for the template (at the same level as containers) ```"imagePullSecrets": { "name": "regcred" }```
+

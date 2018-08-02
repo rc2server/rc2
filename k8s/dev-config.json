@@ -1,6 +1,7 @@
 {
 	"dbHost": "rc2pgdb-primary",
 	"dbName": "rc2dev",
+	"dbPassword": "rc2",
 	"computeHost": "compute",
 	"computeTimeout": 4,
 	"computeDbHost": "rc2pgdb-primary",
@@ -8,5 +9,6 @@
 	"urlPrefixToIgnore": "/dev",
 	"computeViaK8s": true,
 	"k8sStencilPath": "/rc2/rc2root/k8s/templates",
-	"computeImage": "rc2server/compute:0.6.1"
+	"computeImage": "rc2server/compute:0.6.1",
+	"sessionReapDelay": 15
 }

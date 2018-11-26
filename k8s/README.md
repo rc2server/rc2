@@ -180,3 +180,7 @@ kubectl create secret docker-registry regcred --docker-server=<your-registry-ser
 
 Then add to the spec for the template (at the same level as containers) ```"imagePullSecrets": { "name": "regcred" }```
 
+### Azure setup
+
+Follow [this](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
+

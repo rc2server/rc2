@@ -85,7 +85,7 @@ userId integer;
 projectId integer;
 BEGIN
 INSERT INTO rcuser (login, firstname, lastname, email, passworddata) VALUES
-(login, fname, lname, email, crypt(password, gen_salt('bf', 8))) RETURNING id INTO userId;
+(LOWER(login), fname, lname, email, crypt(password, gen_salt('bf', 8))) RETURNING id INTO userId;
 INSERT INTO rcproject (userid, name) VALUES (userId, 'default') RETURNING ID INTO projectId;
 INSERT INTO rcworkspace (userid, projectid, name) VALUES (userId, projectId, 'default');
 RETURN userId;

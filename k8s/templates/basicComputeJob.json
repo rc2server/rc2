@@ -22,7 +22,8 @@
 						"ports": [{
 							"containerPort": 7714
 							}],
-						"command": ["/rc2compute/rserver"]
+						"command": ["/rc2compute/rserver"],
+          	"imagePullPolicy": "Always"
 					}],
 					"imagePullSecrets": [{ "name": "regcred" }]
 				}

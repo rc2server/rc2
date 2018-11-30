@@ -77,7 +77,7 @@ DROP FUNCTION IF EXISTS public.rc2createuser(login character varying, fname char
 -- Name: rc2createuser(character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying) RETURNS integer
+CREATE OR REPLACE FUNCTION rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 DECLARE

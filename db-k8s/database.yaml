@@ -4,18 +4,6 @@ metadata:
   name: rc2pgdb-sa
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: rc2pgdata
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: do-block-storage
-  resources:
-    requests:
-        storage: 5G
----
-apiVersion: v1
 kind: Service
 metadata:
   name: rc2pgdb
@@ -93,18 +81,16 @@ spec:
           ports:
             - containerPort: 5432
               name: postgres
-#          readinessProbe:
-#            exec:
-#              command:
-#                - /opt/cpm/bin/readiness.sh
-#            initialDelaySeconds: 40
-#            timeoutSeconds: 1
-#          livenessProbe:
-#            exec:
-#              command:
-#                - /opt/cpm/bin/liveness.sh
-#            initialDelaySeconds: 40
-#            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command: ["psql", "-d", "rc2dev", "-U", "rc2", "-c", "select 1"]
+            initialDelaySeconds: 40
+            timeoutSeconds: 1
+          livenessProbe:
+            exec:
+              command: ["psql", "-d", "rc2dev", "-U", "rc2", "-c", "select 1"]
+            initialDelaySeconds: 40
+            timeoutSeconds: 1
           env:
             - name: PGHOST
               value: /tmp

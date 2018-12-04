@@ -13,7 +13,7 @@ spec:
         app: appserver-dev
     spec:
       containers:
-        - image: docker.rc2.io/appserver-dev:latest
+        - image: gcr.io/rc2live-224018/appserver-dev:v22
           name: rc2appserverdev
           imagePullPolicy: "Always"
           command: [ "/rc2/appserver", "-D", "/rc2/config" ]
@@ -42,5 +42,5 @@ spec:
       targetPort: 8088
   selector:
     app: appserver-dev
-  type: ClusterIP
+  type: NodePort
   sessionAffinity: None

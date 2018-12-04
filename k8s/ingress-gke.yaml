@@ -3,7 +3,8 @@ kind: Ingress
 metadata:
   name: appserver-release
   annotations:
-    kubernetes.io/ingress.class: nginx
+#    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.global-static-ip-name: rc2api-ip
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:

@@ -151,6 +151,8 @@ that will update a metadata label with the current/time, which will force the po
 
 to install run `helm install --name rc2-ingress stable/nginx-ingress --set controller.service.type=NodePort --set controller.service.externalIPs={159.203.191.162}` replacing the ip address with the appropriate external address.
 
+
+## install ssl cert
 place the key in tls.key, the cert (with intermediate after our key) in tls.crt, then run `kubectl create secret tls api-rc2-io-tls --key tls.key --cert tls.crt `
 
 apply appserver-ingress.yaml
@@ -184,3 +186,15 @@ Then add to the spec for the template (at the same level as containers) ```"imag
 
 Follow [this](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
 
+to login from command line: `az login -u <username> -p <password> --allow-no-subscriptions`
+
+https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli
+
+### GKE
+
+Install gcloud
+
+gcloud login
+
+\# enable docker to gke container
+gcloud container clusters get-credentials rc2-live

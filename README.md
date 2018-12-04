@@ -22,3 +22,7 @@ Once a database is created, the admin needs to execute `CREATE EXTENSION IF NOT 
 ## SQL create/dump
 
 To export updated schema, use `pg_dump -cOsx --if-exists --inserts -U rc2 rc2`. Test data is normally added manually. To dump the data for a table, use `pg_dump -U rc2 -t <tablename> -a rc2`.
+
+## GKE todo
+
+* change storage from 5gb to what fits in minimum charge

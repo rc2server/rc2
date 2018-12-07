@@ -13,7 +13,7 @@ spec:
         app: appserver-dev
     spec:
       containers:
-        - image: gcr.io/rc2live-224018/appserver-dev:v22
+        - image: gcr.io/rc2live-224018/appserver-dev:v28
           name: rc2appserverdev
           imagePullPolicy: "Always"
           command: [ "/rc2/appserver", "-D", "/rc2/config" ]

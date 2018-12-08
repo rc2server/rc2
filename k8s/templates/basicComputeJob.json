@@ -5,7 +5,8 @@
 		"name": "compute-{{ sessionId }}",
 		"labels": {
 			"workspace": "{{ wspaceId }}",
-			"sessionId": "{{ sessionId }}"
+			"sessionId": "{{ sessionId }}",
+			"compute": true
 			}
 		},
 	"spec": {

@@ -100,21 +100,7 @@ on mac:  `helm init`
 	3. cp helm binary to /usr/local/bin
 	4. helm init
 
-## install OpenEBS
-
-on master: 
-
-```
-kubectl -n kube-system create sa tiller
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-kubectl -n kube-system patch deploy/tiller-deploy -p '{"spec": {"template": {"spec": {"serviceAccountName": "tiller"}}}}'
-helm install stable/openebs --name openebs --namespace openebs
-git clone https://github.com/openebs/openebs
-kubectl apply -f openebs/k8s/openebs-operator.yaml
-kubectl apply -f openebs/k8s/openebs-storageclasses.yaml
-```
-
-## install postgres
+`## install postgres
 
 1. edit secrets.yaml with appropriate values
 2. ./run.sh
@@ -159,11 +145,14 @@ apply appserver-ingress.yaml
 
 ## docker registry
 
-run the following to start and keep running a registry. Change the paths as appropriate.
+Use `docker-compose -f registry-compose.yml up -d` to start the registry. It requires the following files to be at these paths:
 
-```
-docker run -d -p 443:443 --name registry --restart=always -v /var/lib/registry:/var/lib/registry -v /root/docker-certs:/certs -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/tls.crt -e REGISTRY_HTTP_TLS_KEY=/certs/tls.key registry:2
-```
+* `/root/docker/auth/htpasswd`: an htpasswd file with login/password combos. See below for how to create/add
+* `/root/docker/data/`: data directory to store images
+* `/root/docker/certs/tls.crt`: ssl certificate to use
+* `/root/docker/certs/tls.key`: key used by certificate
+
+The key/cert are in DropBox.
 
 ### creating authentication
 
@@ -198,3 +187,5 @@ gcloud login
 
 \# enable docker to gke container
 gcloud container clusters get-credentials rc2-live
+
+Default ingress maxes connection lengths at 30 seconds. Need to adjust that to the maximum value of 86400, 1 day. This is adjusted in `Network Servicex` in the `Load balancing` section. Drill down to the backend service and you should find the timeout.

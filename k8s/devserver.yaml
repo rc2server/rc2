@@ -13,7 +13,7 @@ spec:
         app: appserver-dev
     spec:
       containers:
-        - image: gcr.io/rc2live-224018/appserver-dev:v28
+        - image: gcr.io/rc2live-224018/appserver-dev:v33
           name: rc2appserverdev
           imagePullPolicy: "Always"
           command: [ "/rc2/appserver", "-D", "/rc2/config" ]
@@ -44,3 +44,4 @@ spec:
     app: appserver-dev
   type: NodePort
   sessionAffinity: None
+  

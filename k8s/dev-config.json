@@ -6,9 +6,8 @@
 	"computeTimeout": 4,
 	"computeDbHost": "rc2pgdb-primary",
 	"initialLogLevel": 4,
-	"urlPrefixToIgnore": "/dev",
 	"computeViaK8s": true,
 	"k8sStencilPath": "/rc2/rc2root/k8s/templates",
-	"computeImage": "docker.rc2.io/compute:latest",
+	"computeImage": "gcr.io/rc2live-224018/compute:latest",
 	"sessionReapDelay": 15
 }

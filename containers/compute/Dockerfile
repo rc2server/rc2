@@ -9,25 +9,25 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 	&& echo "deb http://cran.mirrors.hoobly.com/bin/linux/ubuntu xenial/" > /etc/apt/sources.list.d/R.list \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
 	&& apt-get update \
-	&& apt-get install -y wget curl vim \
+	&& apt-get install -y curl vim \
 		 python-software-properties software-properties-common postgresql-client-9.6 \
 		libpq-dev clang libicu-dev libcurl4-openssl-dev libxml2 libminizip-dev \
 		alien build-essential git libtiff5-dev libbz2-dev uuid-dev \
-		libssl-dev libreadline-dev libgoogle-glog-dev \
-	&& apt-get clean
+		libssl-dev libreadline-dev libgoogle-glog-dev 
+#	&& apt-get clean
 
 RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-4.2.1-release/ubuntu1604/swift-4.2.1-RELEASE/swift-4.2.1-RELEASE-ubuntu16.04.tar.gz | tar --strip 1 -zx 
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 
-RUN apt-get install -y default-jre xorg-dev libcairo2-dev gfortran pandoc perl
+RUN apt-get install -y xorg-dev libcairo2-dev pandoc perl gfortran
 
-RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english && apt-get clean
+RUN apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra texlive-lang-english
 
 RUN apt-get install -y r-base-dev \
 	&& mkdir -p /rc2compute/userlib \
 	&& echo 'R_LIBS_USER=/rc2compute/userlib' >> /etc/R/Renviron.site \
 	&& echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \
-	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp","inline"), "/usr/local/lib/R/site-library")' && apt-get clean
+	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp","inline"), "/usr/local/lib/R/site-library")'
 
 ARG FORCE_DLOAD=0
 #RUN wget --max-redirect 4 -O - --quiet https://github.com/rc2server/compute/releases/latest |\

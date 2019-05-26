@@ -1,9 +1,59 @@
-# initial machine setup
+# Digital Ocean setup (ubuntu 18.04)
+
+This is all done on a regular applet that will host the registry and be used to manage k8s.
+
+## setup tools
+
+``` bash
+   	apt-get update
+   	apt-get install docker.io
+   	systemctl restart docker
+   	snap install --classic kubectl
+   	apt-get remove golang-docker-credential-helpers
+```	 
+download k8s config file from DO into `~/.kube/config`
+
+## Create docker registry
+
+Use `docker-compose -f registry-compose.yml up -d` to start the registry. It requires the following files to be at these paths:
+
+* `/root/docker/auth/htpasswd`: an htpasswd file with login/password combos. See below for how to create/add
+* `/root/docker/data/`: data directory to store images
+* `/root/docker/certs/tls.crt`: ssl certificate to use
+* `/root/docker/certs/tls.key`: key used by certificate
+
+The key/cert are in DropBox.
+
+### creating authentication
+
+`docker run --entrypoint htpasswd registry:2 -Bbn <userid> <password> >> htpasswd`
+
+
+Run that in the directory used by the registry (/root/docker-certs in the example) to add a user.
+
+## Postgresql
+
+In the db-k8s directory
+
+1. Create storage with `kubectl apply -f storage-digitaloceean.yaml`. 
+1. Run `kubectl get pvc`. If nothing is listed, do previous step again.
+1. edit secrets.yaml with appropriate values
+1. ./run.sh
+1. run `kubectl get pods -o wide` until 1/1 are ready and status is Running.
+1. until reegistration is supported, create a user with `kubectl exec rc2pgdb-0 -it -- psql -U rc2 -c "select rc2createuser('login', 'FirstName', 'LastName', 'email@domain', 'password');" rc2`
+1. run the same command with `rc2dev` at the end to do the same for the test database.
+
+to connect via psql run `kubectl exec rc2pgdb-0 -it -- bash`
+
+
+# Raw setup
+
+## initial machine setup
 	apt-get update
 	apt-get install docker.io
 	systemctl restart docker
 
-## etc setup
+### etc setup
 get version number from https://github.com/coreos/etcd/releases
 
 	export ETCD_VERSION="v3.3.5"
@@ -19,14 +69,14 @@ on each machine, run
 systemctl enable etcd
 systemctl start etcd
 
-## install kubernetes
+### install kubernetes
 
 	curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 	echo "deb http://apt.kubernetes.io/ kubernetes-xenial-unstable main" > /etc/apt/sources.list.d/kubernetes.list
 	apt-get update
 	apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 
-## configure master configuration on cloud1
+### configure master configuration on cloud1
 
 create `master-configuration.yml`
 
@@ -62,7 +112,7 @@ follow .kube instructions to config for self
 install [Weave Net](https://github.com/weaveworks/weave) on master to create a virtual network between containers 
 `kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"`
 
-## firewall setup
+### firewall setup
 
 on all machines:
 ```
@@ -87,7 +137,7 @@ ufw allow from https
 	scp cloud1:/root/.kube/config ~/.kube/config
 	brew install kubernetes-helm
 
-## install helm
+### install helm
 
 helm is the kubernetes eqivilent of apt/homebrew
 
@@ -100,7 +150,7 @@ on mac:  `helm init`
 	3. cp helm binary to /usr/local/bin
 	4. helm init
 
-`## install postgres
+## install postgres
 
 1. edit secrets.yaml with appropriate values
 2. ./run.sh
@@ -109,13 +159,13 @@ on mac:  `helm init`
 
 to connect via psql, on master run `kubectl exec rc2pgdb-0 -it -- bash`
 
-until the appserver supports registration, need to connect to database and create a user:
+until the appserver supports registration, need to connect to production & dev databases and create a user:
 
 ```
 select rc2createuser('mlilback', 'Mark', 'Lilback', 'mark@lilback.com', '<unencrypted password>');
 ```
 
-## create configmap and deployment for appserver
+### create configmap and deployment for appserver
 
 run:
 
@@ -133,17 +183,17 @@ to restart the dev version and pull the latest docker image, use `kubectl patch 
 
 that will update a metadata label with the current/time, which will force the pods to reload.
 
-## ingress
+### ingress
 
 to install run `helm install --name rc2-ingress stable/nginx-ingress --set controller.service.type=NodePort --set controller.service.externalIPs={159.203.191.162}` replacing the ip address with the appropriate external address.
 
 
-## install ssl cert
+### install ssl cert
 place the key in tls.key, the cert (with intermediate after our key) in tls.crt, then run `kubectl create secret tls api-rc2-io-tls --key tls.key --cert tls.crt `
 
 apply appserver-ingress.yaml
 
-## docker registry
+### docker registry
 
 Use `docker-compose -f registry-compose.yml up -d` to start the registry. It requires the following files to be at these paths:
 
@@ -154,7 +204,7 @@ Use `docker-compose -f registry-compose.yml up -d` to start the registry. It req
 
 The key/cert are in DropBox.
 
-### creating authentication
+#### creating authentication
 
 ```
 docker run --entrypoint htpasswd registry:2 -Bbn <userid> <password> >> htpasswd
@@ -171,7 +221,7 @@ kubectl create secret docker-registry regcred --docker-server=<your-registry-ser
 
 Then add to the spec for the template (at the same level as containers) ```"imagePullSecrets": { "name": "regcred" }```
 
-### Azure setup
+#### Azure setup
 
 Follow [this](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
 
@@ -179,7 +229,7 @@ to login from command line: `az login -u <username> -p <password> --allow-no-sub
 
 https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli
 
-### GKE
+#### GKE
 
 Install gcloud
 

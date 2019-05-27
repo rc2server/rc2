@@ -9,6 +9,6 @@
 	"urlPrefixToIgnore": "/dev",
 	"computeViaK8s": true,
 	"k8sStencilPath": "/rc2/rc2root/k8s/templates",
-	"computeImage": "docker.rc2.io/compute:latest",
+	"computeImage": "docker.rc2.io:5000/compute:latest",
 	"sessionReapDelay": 15
 }

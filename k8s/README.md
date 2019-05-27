@@ -13,6 +13,9 @@ This is all done on a regular applet that will host the registry and be used to 
 ```	 
 download k8s config file from DO into `~/.kube/config`
 
+install helm following [instructions](
+https://www.digitalocean.com/community/tutorials/how-to-install-software-on-kubernetes-clusters-with-the-helm-package-manager)
+
 ## Create docker registry
 
 Use `docker-compose -f registry-compose.yml up -d` to start the registry. It requires the following files to be at these paths:
@@ -45,6 +48,22 @@ In the db-k8s directory
 
 to connect via psql run `kubectl exec rc2pgdb-0 -it -- bash`
 
+## App Server
+
+in the k8s directory
+
+1. Create the config map with `kubectl create configmap appserver-dev --from-file=config.json=dev-config.json`. Use appserver-release/appserver-config.json for live server
+
+2. Run `kubectl apply -f devserver.json` to create the server. Run `kubectl get pods` until you see a pod is running.
+
+## ingress
+
+Instructions based on Digital Ocean [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes), but modified to not use their LoadBalancer
+
+1. `helm install stable/nginx-ingress --name rc2-nginx --set rbac.create=true`
+2. `kubectl apply -f ingress-do.yml"
+
+---
 
 # Raw setup
 

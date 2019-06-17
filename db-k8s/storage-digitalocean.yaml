@@ -8,6 +8,6 @@ spec:
   storageClassName: do-block-storage
   resources:
     requests:
-        storage: 5G
+        storage: 8G
 
 

@@ -1,7 +1,6 @@
 {
-	"dbHost": "rc2pgdb-primary",
-	"computeHost": "compute",
+	"dbHost": "localhost",
+	"computeHost": "localhost",
 	"computeTimeout": 4,
-	"computeDbHost": "rc2pgdb-primary",
-	"initialLogLevel": 4
+	"computeDbHost": "localhost"
 }

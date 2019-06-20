@@ -29,12 +29,12 @@ if ! [ -e "$ROOT/rc2.inited" ]; then
 	echo "rc2.inited does not exist. creating database"
 	mkdir -p $PGDATA
 	touch /rc2/rc2.inited
-	/usr/lib/postgresql/9.4/bin/initdb -D $PGDATA
+	/usr/lib/postgresql/$PGVersion/bin/initdb -D $PGDATA
 	service postgresql start
 	psql --command "CREATE USER rc2; CREATE EXTENSION IF NOT EXISTS pgcrypto;"
 	createdb -O rc2 rc2
 #	cd `pg_config --sharedir`
-	cd /usr/share/postgresql/9.4
+	cd /usr/share/postgresql/$PGVersion
 	echo "create extension pgcrypto" | psql  rc2
 	psql -U rc2 rc2 < /rc2/rc2.sql
 	echo "select rc2CreateUser('local', 'Local', 'Account', 'singlesignin@rc2.io', 'local');" | psql -U rc2 rc2

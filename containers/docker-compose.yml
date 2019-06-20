@@ -1,18 +1,19 @@
 version: '2'
 services:
   dbserver:
-    image: rc2server/dbserver
+    image: rc2server/dbserver:0.5.0
     volumes:
-      - ./pgdata:/rc2
+      - rc2dbdata:/rc2
   compute:
-    image: rc2server/compute
+    image: rc2server/compute:0.6.1
     depends_on:
       - dbserver
   appserver:
-    image: rc2server/appserver
+    image: rc2server/appserver:0.7.0
     ports:
-      - "8088:8088"
+      - "3145:8088"
     depends_on:
       - dbserver
       - compute
-  
+volumes:
+  rc2dbdata:

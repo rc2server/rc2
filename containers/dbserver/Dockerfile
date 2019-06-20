@@ -19,7 +19,7 @@ COPY runpg.sh /var/lib/postgresql/runpg.sh
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-#RUN /var/lib/postgresql/runpg.sh -V ${pgversion} -c
+RUN /var/lib/postgresql/runpg.sh -V ${pgversion} -c
 EXPOSE 5432
 
 CMD ["var/lib/postgresql/runpg.sh", "-V", "9.4"]

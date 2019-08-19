@@ -1,0 +1,10 @@
+{
+	"msg": "open",
+	"argument": "",
+	"wspaceId": 3,
+	"sessionRecId": 2,
+	"dbhost": "localhost",
+	"dbuser": "rc2",
+	"dbname": "rc2"
+}
+

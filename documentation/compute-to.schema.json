@@ -1,0 +1,146 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://rc2.io/something",
+    "title": "Rc2 Compute Messages",
+    "description": "Messages to communicate with Rc2 compute engine",
+
+    "type": "object",
+    "properties": {
+        "msg": {
+            "type": "string",
+            "description": "the command to perform",
+            "enum": ["open", "close", "saveEnv", "execScript", "execAndReturn", "execFile", 
+                "help", "listVariables", "getVariable", "toggleVariableWatch", "clearEnvironment"],
+            "meta:enum": {
+                "open": "open the R connection",
+                "close": "close the R connection",
+                "saveEnv": "save the current environment"
+            }
+        },
+        "argument": {
+            "type": "string",
+            "description": "main argument for the command"
+        }
+    },
+    "required": ["msg", "argument"],
+    "oneOf": [
+        {
+            "properties": {
+               "msg": { "const": "open" },
+               "argument": { "maxLength": 0 },
+               "wspaceId": { "type": "integer", "minimum": 0 },
+               "sessionRecId": { "type": "integer", "minimum": 1 },
+               "dbhost": { "type": "string" },
+               "dbuser": { "type": "string" },
+               "dbname": { "type": "string" },
+               "dbpassword": { "type": "string" }
+            },
+            "additionalProperties": false,
+            "title": "Open the connection",
+            "required": ["argument", "wspaceId", "sessionRecId","dbhost","dbuser","dbname"]
+        },
+        {
+            "properties": {
+                "argument": { "maxLength": 0 },
+                "msg": { "const": "close"}
+            },
+            "title": "Close the connection"
+        },
+        {
+            "properties": {
+                "argument": { "maxLength": 0 },
+                "msg": { "const": "saveEnv"}
+            },
+            "title": "Save the Environment"
+        },
+        {
+            "properties": {
+                "msg": { "const": "execScript"},
+                "argument": { "minLength": 1 },
+                "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
+                "watchVariables": { "type": "boolean" },
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of uery in seconds since 1970" }
+            },
+            "title": "Execute Script",
+            "required": ["queryId"]
+        },
+        {
+            "properties": {
+                "msg": { "const": "execAndReturn"},
+                "argument": { "minLength": 1 },
+                "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of uery in seconds since 1970" }
+            },
+            "title": "Execute and Return Object",
+            "description": "execute and returns only an execComplete response with the result as a json object",
+            "required": ["queryId"]
+        },
+        {
+            "properties": {
+                "msg": { "const": "execFile"},
+                "argument": { "minLength": 1, "pattern": "^[0-9]+$",  "title": "file id as string" },
+                "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "arbitrary id to link query to matching results" },
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of uery in seconds since 1970" },
+                "clientData": { 
+                    "type": "object",
+                    "properties": {
+                        "fileId": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "id of the file to execute"},
+                        "fileVersopm": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "version of the file to execute"}
+                    },
+                    "patternProperties": { ".": { "type": "number", "multipleOf": 1.0 } },
+                    "title": "Custom Data"
+                }
+            },
+            "title": "Execute File",
+            "required": ["queryId"]
+        },
+        {
+            "properties": {
+                "msg": { "const": "help"},
+                "argument": { "type": "string", "minLength": 1}
+            },
+            "title": "Get Help Paths for Topic"
+        },
+        {
+            "properties": {
+                "msg": { "const": "listVariables"},
+                "argument": { "maxLength": 0 },
+                "delta": { "type": "boolean" },
+                "contextId": { "type": "integer" }
+            },
+            "title": "List Variables in Global Workspace",
+            "required": ["delta"]
+        },
+        {
+            "properties": {
+                "argument": { "minLength": 1 },
+                "msg": { "const": "getVariable"},
+                "clientData": { 
+                    "type": "object",
+                    "patternProperties": { ".": { "type": "number", "multipleOf": 1.0 } }
+                },
+                "contextId": { "type": "integer" }
+            },
+            "title": "Get Value of a Named Variable"
+        },
+        {
+            "properties": {
+                "msg": { "const": "toggleVariableWatch"},
+                "argument": { "maxLength": 0 },
+                "contextId": { "type": "integer" },
+                "watch": { "type": "boolean" }
+            },
+            "additionalProperties": false,
+            "title": "Toggle if Variable Changes are Being Watched",
+            "required": ["watch"]
+        },
+        {
+            "properties": {
+                "msg": { "const": "clearEnvironment"},
+                "argument": { "maxLength": 0 },
+                "contextId": { "type": "integer" }
+            },
+            "title": "Clears the Global Environment"
+        }
+    ]
+}

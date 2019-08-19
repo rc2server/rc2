@@ -1,0 +1,7 @@
+{
+	"msg": "getVariable",
+	"argument": "x",
+	"contextId": 212,
+	"clientData": { "clientIdent": 2 }
+}
+

@@ -5,6 +5,7 @@
     "description": "Messages to communicate with Rc2 compute engine",
 
     "type": "object",
+    "minProperties": 2,
     "properties": {
         "msg": {
             "type": "string",
@@ -59,7 +60,7 @@
                 "argument": { "minLength": 1 },
                 "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
                 "watchVariables": { "type": "boolean" },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of uery in seconds since 1970" }
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" }
             },
             "title": "Execute Script",
             "required": ["queryId"]
@@ -69,7 +70,7 @@
                 "msg": { "const": "execAndReturn"},
                 "argument": { "minLength": 1 },
                 "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of uery in seconds since 1970" }
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" }
             },
             "title": "Execute and Return Object",
             "description": "execute and returns only an execComplete response with the result as a json object",
@@ -80,7 +81,7 @@
                 "msg": { "const": "execFile"},
                 "argument": { "minLength": 1, "pattern": "^[0-9]+$",  "title": "file id as string" },
                 "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "arbitrary id to link query to matching results" },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of uery in seconds since 1970" },
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" },
                 "clientData": { 
                     "type": "object",
                     "properties": {

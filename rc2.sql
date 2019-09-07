@@ -70,6 +70,7 @@ DROP FUNCTION IF EXISTS public.update_lastmodified_column();
 DROP FUNCTION IF EXISTS public.rcfile_notifyu();
 DROP FUNCTION IF EXISTS public.rcfile_notifyi();
 DROP FUNCTION IF EXISTS public.rcfile_notifyd();
+DROP FUNCTION IF EXISTS public.rc2setpassword(userid integer, newpassword character varying);
 DROP FUNCTION IF EXISTS public.rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying);
 DROP EXTENSION IF EXISTS pgcrypto;
 DROP EXTENSION IF EXISTS plpgsql;
@@ -137,6 +138,17 @@ RETURN userId;
 END;
 $$;
 
+CREATE FUNCTION rc2setpassword(userid integer, newpassword character varying) RETURNS character varying
+  LANGUAGE plpgsql
+  AS $$
+DECLARE
+encrypted character varying;
+BEGIN
+encrypted = crypt(newpassword, gen_salt('bf', 8));
+UPDATE rcuser SET passworddata = encrypted WHERE id = userid;
+RETURN encrypted;
+END;	
+$$;
 
 --
 -- Name: rcfile_notifyd(); Type: FUNCTION; Schema: public; Owner: -

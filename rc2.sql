@@ -624,6 +624,8 @@ CREATE TRIGGER rcworkspace_update_lastmod BEFORE UPDATE ON rcworkspace FOR EACH 
 CREATE TRIGGER rcworkspace_update_version BEFORE UPDATE ON rcworkspace FOR EACH ROW EXECUTE PROCEDURE update_version_column();
 
 
+CREATE TRIGGER rcfile_update_version BEFORE UPDATE ON rcfile FOR EACH ROW EXECUTE PROCEDURE update_version_column();
+
 --
 -- Name: logintoken logintoken_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --

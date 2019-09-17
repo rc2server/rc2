@@ -15,10 +15,13 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 	&& apt-get clean
 # removed supervisor postgresql-9.6 postgresql-contrib-9.6  xorg-dev gfortran pandoc libcairo2-dev default-jre perl
 
-RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-4.2.1-release/ubuntu1604/swift-4.2.1-RELEASE/swift-4.2.1-RELEASE-ubuntu16.04.tar.gz | tar --strip 1 -zx 
+RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.0.3-release/ubuntu1604/swift-5.0.3-RELEASE/swift-5.0.3-RELEASE-ubuntu16.04.tar.gz | tar --strip 1 -zx 
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 
 #RUN locale-gen en_US.UTF-8
+
+# to blow the cache for all following lines, use --build-arg xdate=$(date +%s)
+ARG xdate="43"
 
 USER root
 

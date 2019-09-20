@@ -1,15 +1,15 @@
 version: '2'
 services:
   dbserver:
-    image: rc2server/dbserver:0.5.0
+    image: rc2server/dbserver:0.7.0
     volumes:
       - rc2dbdata:/rc2
   compute:
-    image: rc2server/compute:0.6.1
+    image: rc2server/compute:0.7.0
     depends_on:
       - dbserver
   appserver:
-    image: rc2server/appserver:0.7.0
+    image: rc2server/appserver:0.8.1
     ports:
       - "3145:8088"
     depends_on:

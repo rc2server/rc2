@@ -16,7 +16,7 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97
 		libssl-dev libreadline-dev libgoogle-glog-dev \
 	&& apt-get clean
 
-RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.0.3-release/ubuntu1804/swift-5.0.3-RELEASE/swift-5.0.3-RELEASE-ubuntu18.04.tar.gz | tar --strip 1 -zx 
+RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.1-release/ubuntu1804/swift-5.1-RELEASE/swift-5.1-RELEASE-ubuntu18.04.tar.gz | tar --strip 1 -zx 
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 
 #RUN locale-gen en_US.UTF-8

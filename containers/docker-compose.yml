@@ -5,7 +5,7 @@ services:
     volumes:
       - rc2dbdata:/rc2
   compute:
-    image: rc2server/compute:0.7.1
+    image: rc2server/compute:0.7.2
     depends_on:
       - dbserver
   appserver:

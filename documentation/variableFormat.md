@@ -1,15 +1,22 @@
+
+
+_not sure why this was here, very 
 What format do vector, matrix, array come as?
 
 is object?
+
 	- setObjectData
 	- addSummary
+
 switch sexp
-	- vecsxp: setListData
+
+	- vecsxp, listsxp: setListData
 	- envsxp: setEnvironmentData
 	- closxp, specialsxp, builtinsxp: setFunctionData
 	- default: setPrimitiveData
 
 ## Object
+
 	- class first name, or  "ordered factor" if (class[1] == "ordered", class[2] == "factor")
 	- if s4 { S4 = true }
 	- if factor: type = "f", levels = ["",""], values = [1,2,1]

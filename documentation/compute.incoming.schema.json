@@ -11,7 +11,8 @@
             "type": "string",
             "description": "the command to perform",
             "enum": ["open", "close", "saveEnv", "execScript", "execAndReturn", "execFile", 
-                "help", "listVariables", "getVariable", "toggleVariableWatch", "clearEnvironment"],
+                "help", "listVariables", "getVariable", "toggleVariableWatch", "clearEnvironment",
+                "createEnvironment"],
             "meta:enum": {
                 "open": "open the R connection",
                 "close": "close the R connection",
@@ -70,11 +71,12 @@
                 "msg": { "const": "execAndReturn"},
                 "argument": { "minLength": 1 },
                 "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" }
+                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" },
+                "contextId": { "type": "integer" }
             },
             "title": "Execute and Return Object",
             "description": "execute and returns only an execComplete response with the result as a json object",
-            "required": ["queryId"]
+            "required": ["queryId", "contextId"]
         },
         {
             "properties": {
@@ -141,7 +143,14 @@
                 "argument": { "maxLength": 0 },
                 "contextId": { "type": "integer" }
             },
-            "title": "Clears the Global Environment"
+            "title": "Clears the argument specified as contextId, or the global environment"
+        },
+        {
+            "properties": {
+                "msg": { "const": "createEnvironment"},
+                "argument": { "minLength": 1 }
+            },
+            "title": "Creates a new Environment"
         }
     ]
 }

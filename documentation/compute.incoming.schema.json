@@ -35,11 +35,12 @@
                "dbhost": { "type": "string" },
                "dbuser": { "type": "string" },
                "dbname": { "type": "string" },
-               "dbpassword": { "type": "string" }
+               "dbpassword": { "type": "string" },
+               "apiVersion": { "type": "integer", "minimum": 0 }
             },
             "additionalProperties": false,
             "title": "Open the connection",
-            "required": ["argument", "wspaceId", "sessionRecId","dbhost","dbuser","dbname"]
+            "required": ["argument", "wspaceId", "sessionRecId","dbhost","dbuser","dbname", "apiVersion"]
         },
         {
             "properties": {

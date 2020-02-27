@@ -31,7 +31,7 @@ RUN apt-get install -y r-base-dev \
 	&& mkdir -p /rc2compute/userlib \
 	&& echo 'R_LIBS_USER=/rc2compute/userlib' >> /etc/R/Renviron.site \
 	&& echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site \
-	&& Rscript -e 'install.packages(c("knitr","rmarkdown","Rcpp","inline", "tidyverse", "evaluate"), "/usr/local/lib/R/site-library", quiet=TRUE, type="source")'
+	&& Rscript -e 'install.packages(c("RSQLite", "knitr","rmarkdown","Rcpp","inline", "tidyverse", "evaluate"), "/usr/local/lib/R/site-library", quiet=TRUE, type="source")'
 
 ARG FORCE_DLOAD=0
 #RUN wget --max-redirect 4 -O - --quiet https://github.com/rc2server/compute/releases/latest |\

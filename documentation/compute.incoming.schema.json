@@ -35,6 +35,22 @@
   ],
   "oneOf" : [
     {
+        "properties": {
+           "msg": { "enum": ["open"] },
+           "argument": { "type" : "string", "maxLength": 0 },
+           "wspaceId": { "type": "integer", "minimum": 0 },
+           "sessionRecId": { "type": "integer", "minimum": 1 },
+           "dbhost": { "type": "string" },
+           "dbuser": { "type": "string" },
+           "dbname": { "type": "string" },
+           "dbpassword": { "type": "string" },
+           "apiVersion": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false,
+        "title": "Open the connection",
+        "required": ["argument", "wspaceId", "sessionRecId","dbhost","dbuser","dbname", "apiVersion"]
+    },
+    {
       "properties" : {
         "msg" : {
           "enum" : ["close"]

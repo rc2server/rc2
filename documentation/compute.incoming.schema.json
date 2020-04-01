@@ -22,12 +22,7 @@
         "toggleVariableWatch",
         "clearEnvironment",
         "createEnvironment"
-      ],
-      "meta:enum" : {
-        "open" : "open the R connection",
-        "close" : "close the R connection",
-        "saveEnv" : "save the current environment"
-      }
+      ]
     },
     "argument" : {
       "type" : "string",
@@ -42,56 +37,11 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "open"
-        },
-        "argument" : {
+          "enum" : ["close"]
+       },
+       "argument" : {
+          "type" : "string",
           "maxLength" : 0
-        },
-        "wspaceId" : {
-          "type" : "integer",
-          "minimum" : 0
-        },
-        "sessionRecId" : {
-          "type" : "integer",
-          "minimum" : 1
-        },
-        "dbhost" : {
-          "type" : "string"
-        },
-        "dbuser" : {
-          "type" : "string"
-        },
-        "dbname" : {
-          "type" : "string"
-        },
-        "dbpassword" : {
-          "type" : "string"
-        },
-        "apiVersion" : {
-          "type" : "integer",
-          "minimum" : 0
-        }
-      },
-      "additionalProperties" : false,
-      "title" : "Open the connection",
-      "required" : [
-        "argument",
-        "wspaceId",
-        "sessionRecId",
-        "dbhost",
-        "dbuser",
-        "dbname",
-        "apiVersion"
-      ],
-      "$comment" : "open command"
-    },
-    {
-      "properties" : {
-        "argument" : {
-          "maxLength" : 0
-        },
-        "msg" : {
-          "const" : "close"
         }
       },
       "title" : "Close the connection",
@@ -100,10 +50,11 @@
     {
       "properties" : {
         "argument" : {
+          "type" : "string", 
           "maxLength" : 0
         },
         "msg" : {
-          "const" : "saveEnv"
+          "enum" : ["saveEnv"]
         }
       },
       "title" : "Save Environment"
@@ -111,9 +62,10 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "execScript"
+           "enum" : ["execScript"]
         },
         "argument" : {
+          "type" : "string",
           "minLength" : 1
         },
         "queryId" : {
@@ -138,9 +90,10 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "execAndReturn"
+          "enum" : ["execAndReturn"]
         },
         "argument" : {
+          "type" : "string",
           "minLength" : 1
         },
         "queryId" : {
@@ -167,7 +120,7 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "execFile"
+          "enum" : ["execFile"]
         },
         "argument" : {
           "minLength" : 1,
@@ -218,7 +171,7 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "help"
+          "enum" : ["help"]
         },
         "argument" : {
           "type" : "string",
@@ -231,9 +184,10 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "listVariables"
+          "enum" : ["listVariables"]
         },
         "argument" : {
+          "type" : "string",
           "maxLength" : 0
         },
         "delta" : {
@@ -251,10 +205,11 @@
     {
       "properties" : {
         "argument" : {
+          "type" : "string",
           "minLength" : 1
         },
         "msg" : {
-          "const" : "getVariable"
+          "enum" : ["getVariable"]
         },
         "clientData" : {
           "type" : "object",
@@ -274,9 +229,10 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "toggleVariableWatch"
+          "enum" : ["toggleVariableWatch"]
         },
         "argument" : {
+          "type" : "string",
           "maxLength" : 0
         },
         "contextId" : {
@@ -296,9 +252,10 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "clearEnvironment"
+          "enum" : ["clearEnvironment"]
         },
         "argument" : {
+          "type" : "string",
           "maxLength" : 0
         },
         "contextId" : {
@@ -311,9 +268,10 @@
     {
       "properties" : {
         "msg" : {
-          "const" : "createEnvironment"
+          "enum" : ["createEnvironment"]
         },
         "argument" : {
+          "type" : "string",
           "minLength" : 1
         }
       },

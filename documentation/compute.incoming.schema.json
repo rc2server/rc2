@@ -1,157 +1,323 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://rc2.io/something",
-    "title": "Rc2 Compute Messages",
-    "description": "Messages to communicate with Rc2 compute engine",
-
-    "type": "object",
-    "minProperties": 2,
-    "properties": {
-        "msg": {
-            "type": "string",
-            "description": "the command to perform",
-            "enum": ["open", "close", "saveEnv", "execScript", "execAndReturn", "execFile", 
-                "help", "listVariables", "getVariable", "toggleVariableWatch", "clearEnvironment",
-                "createEnvironment"],
-            "meta:enum": {
-                "open": "open the R connection",
-                "close": "close the R connection",
-                "saveEnv": "save the current environment"
-            }
-        },
-        "argument": {
-            "type": "string",
-            "description": "main argument for the command"
-        }
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "$id" : "https://rc2.io/something",
+  "title" : "Rc2 Compute Messages",
+  "description" : "Messages to communicate with Rc2 compute engine",
+  "type" : "object",
+  "minProperties" : 2,
+  "properties" : {
+    "msg" : {
+      "type" : "string",
+      "description" : "the command to perform",
+      "enum" : [
+        "open",
+        "close",
+        "saveEnv",
+        "execScript",
+        "execAndReturn",
+        "execFile",
+        "help",
+        "listVariables",
+        "getVariable",
+        "toggleVariableWatch",
+        "clearEnvironment",
+        "createEnvironment"
+      ],
+      "meta:enum" : {
+        "open" : "open the R connection",
+        "close" : "close the R connection",
+        "saveEnv" : "save the current environment"
+      }
     },
-    "required": ["msg", "argument"],
-    "oneOf": [
-        {
-            "properties": {
-               "msg": { "const": "open" },
-               "argument": { "maxLength": 0 },
-               "wspaceId": { "type": "integer", "minimum": 0 },
-               "sessionRecId": { "type": "integer", "minimum": 1 },
-               "dbhost": { "type": "string" },
-               "dbuser": { "type": "string" },
-               "dbname": { "type": "string" },
-               "dbpassword": { "type": "string" },
-               "apiVersion": { "type": "integer", "minimum": 0 }
-            },
-            "additionalProperties": false,
-            "title": "Open the connection",
-            "required": ["argument", "wspaceId", "sessionRecId","dbhost","dbuser","dbname", "apiVersion"]
+    "argument" : {
+      "type" : "string",
+      "description" : "main argument for the command"
+    }
+  },
+  "required" : [
+    "msg",
+    "argument"
+  ],
+  "oneOf" : [
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "open"
         },
-        {
-            "properties": {
-                "argument": { "maxLength": 0 },
-                "msg": { "const": "close"}
-            },
-            "title": "Close the connection"
+        "argument" : {
+          "maxLength" : 0
         },
-        {
-            "properties": {
-                "argument": { "maxLength": 0 },
-                "msg": { "const": "saveEnv"}
-            },
-            "title": "Save the Environment"
+        "wspaceId" : {
+          "type" : "integer",
+          "minimum" : 0
         },
-        {
-            "properties": {
-                "msg": { "const": "execScript"},
-                "argument": { "minLength": 1 },
-                "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
-                "watchVariables": { "type": "boolean" },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" }
-            },
-            "title": "Execute Script",
-            "required": ["queryId"]
+        "sessionRecId" : {
+          "type" : "integer",
+          "minimum" : 1
         },
-        {
-            "properties": {
-                "msg": { "const": "execAndReturn"},
-                "argument": { "minLength": 1 },
-                "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1 },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" },
-                "contextId": { "type": "integer" }
-            },
-            "title": "Execute and Return Object",
-            "description": "execute and returns only an execComplete response with the result as a json object",
-            "required": ["queryId", "contextId"]
+        "dbhost" : {
+          "type" : "string"
         },
-        {
-            "properties": {
-                "msg": { "const": "execFile"},
-                "argument": { "minLength": 1, "pattern": "^[0-9]+$",  "title": "file id as string" },
-                "queryId": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "arbitrary id to link query to matching results" },
-                "startTime": { "type": "string", "pattern": "^[0-9]*$", "title": "start time of query in seconds since 1970" },
-                "clientData": { 
-                    "type": "object",
-                    "properties": {
-                        "fileId": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "id of the file to execute"},
-                        "fileVersopm": { "type": "number", "multipleOf": 1.0, "minimum": 1, "title": "version of the file to execute"}
-                    },
-                    "patternProperties": { ".": { "type": "number", "multipleOf": 1.0 } },
-                    "title": "Custom Data"
-                }
-            },
-            "title": "Execute File",
-            "required": ["queryId"]
+        "dbuser" : {
+          "type" : "string"
         },
-        {
-            "properties": {
-                "msg": { "const": "help"},
-                "argument": { "type": "string", "minLength": 1}
-            },
-            "title": "Get Help Paths for Topic"
+        "dbname" : {
+          "type" : "string"
         },
-        {
-            "properties": {
-                "msg": { "const": "listVariables"},
-                "argument": { "maxLength": 0 },
-                "delta": { "type": "boolean" },
-                "contextId": { "type": "integer" }
-            },
-            "title": "List Variables in Global Workspace",
-            "required": ["delta"]
+        "dbpassword" : {
+          "type" : "string"
         },
-        {
-            "properties": {
-                "argument": { "minLength": 1 },
-                "msg": { "const": "getVariable"},
-                "clientData": { 
-                    "type": "object",
-                    "patternProperties": { ".": { "type": "number", "multipleOf": 1.0 } }
-                },
-                "contextId": { "type": "integer" }
-            },
-            "title": "Get Value of a Named Variable"
-        },
-        {
-            "properties": {
-                "msg": { "const": "toggleVariableWatch"},
-                "argument": { "maxLength": 0 },
-                "contextId": { "type": "integer" },
-                "watch": { "type": "boolean" }
-            },
-            "additionalProperties": false,
-            "title": "Toggle if Variable Changes are Being Watched",
-            "required": ["watch"]
-        },
-        {
-            "properties": {
-                "msg": { "const": "clearEnvironment"},
-                "argument": { "maxLength": 0 },
-                "contextId": { "type": "integer" }
-            },
-            "title": "Clears the argument specified as contextId, or the global environment"
-        },
-        {
-            "properties": {
-                "msg": { "const": "createEnvironment"},
-                "argument": { "minLength": 1 }
-            },
-            "title": "Creates a new Environment"
+        "apiVersion" : {
+          "type" : "integer",
+          "minimum" : 0
         }
-    ]
+      },
+      "additionalProperties" : false,
+      "title" : "Open the connection",
+      "required" : [
+        "argument",
+        "wspaceId",
+        "sessionRecId",
+        "dbhost",
+        "dbuser",
+        "dbname",
+        "apiVersion"
+      ],
+      "$comment" : "open command"
+    },
+    {
+      "properties" : {
+        "argument" : {
+          "maxLength" : 0
+        },
+        "msg" : {
+          "const" : "close"
+        }
+      },
+      "title" : "Close the connection",
+      "description" : "close command"
+    },
+    {
+      "properties" : {
+        "argument" : {
+          "maxLength" : 0
+        },
+        "msg" : {
+          "const" : "saveEnv"
+        }
+      },
+      "title" : "Save Environment"
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "execScript"
+        },
+        "argument" : {
+          "minLength" : 1
+        },
+        "queryId" : {
+          "type" : "number",
+          "multipleOf" : 1,
+          "minimum" : 1
+        },
+        "watchVariables" : {
+          "type" : "boolean"
+        },
+        "startTime" : {
+          "type" : "string",
+          "pattern" : "^[0-9]*$",
+          "title" : "start time of query in seconds since 1970"
+        }
+      },
+      "title" : "Execute Script",
+      "required" : [
+        "queryId"
+      ]
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "execAndReturn"
+        },
+        "argument" : {
+          "minLength" : 1
+        },
+        "queryId" : {
+          "type" : "number",
+          "multipleOf" : 1,
+          "minimum" : 1
+        },
+        "startTime" : {
+          "type" : "string",
+          "pattern" : "^[0-9]*$",
+          "title" : "start time of query in seconds since 1970"
+        },
+        "contextId" : {
+          "type" : "integer"
+        }
+      },
+      "title" : "Execute and Return Object",
+      "description" : "execute and returns only an execComplete response with the result as a json object",
+      "required" : [
+        "queryId",
+        "contextId"
+      ]
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "execFile"
+        },
+        "argument" : {
+          "minLength" : 1,
+          "pattern" : "^[0-9]+$",
+          "title" : "file id as string"
+        },
+        "queryId" : {
+          "type" : "number",
+          "multipleOf" : 1,
+          "minimum" : 1,
+          "title" : "arbitrary id to link query to matching results"
+        },
+        "startTime" : {
+          "type" : "string",
+          "pattern" : "^[0-9]*$",
+          "title" : "start time of query in seconds since 1970"
+        },
+        "clientData" : {
+          "type" : "object",
+          "properties" : {
+            "fileId" : {
+              "type" : "number",
+              "multipleOf" : 1,
+              "minimum" : 1,
+              "title" : "id of the file to execute"
+            },
+            "fileVersopm" : {
+              "type" : "number",
+              "multipleOf" : 1,
+              "minimum" : 1,
+              "title" : "version of the file to execute"
+            }
+          },
+          "patternProperties" : {
+            "." : {
+              "type" : "number",
+              "multipleOf" : 1
+            }
+          },
+          "title" : "Custom Data"
+        }
+      },
+      "title" : "Execute File",
+      "required" : [
+        "queryId"
+      ]
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "help"
+        },
+        "argument" : {
+          "type" : "string",
+          "minLength" : 1
+        }
+      },
+      "title" : "Get Help",
+      "description" : "Get Help Paths for Topic"
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "listVariables"
+        },
+        "argument" : {
+          "maxLength" : 0
+        },
+        "delta" : {
+          "type" : "boolean"
+        },
+        "contextId" : {
+          "type" : "integer"
+        }
+      },
+      "title" : "List Variables",
+      "required" : [
+        "delta"
+      ]
+    },
+    {
+      "properties" : {
+        "argument" : {
+          "minLength" : 1
+        },
+        "msg" : {
+          "const" : "getVariable"
+        },
+        "clientData" : {
+          "type" : "object",
+          "patternProperties" : {
+            "." : {
+              "type" : "number",
+              "multipleOf" : 1
+            }
+          }
+        },
+        "contextId" : {
+          "type" : "integer"
+        }
+      },
+      "title" : "Get Variable"
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "toggleVariableWatch"
+        },
+        "argument" : {
+          "maxLength" : 0
+        },
+        "contextId" : {
+          "type" : "integer"
+        },
+        "watch" : {
+          "type" : "boolean"
+        }
+      },
+      "additionalProperties" : false,
+      "title" : "Toggle Variable Watch",
+      "description" : "Toggle if Variable Changes are Being Watched",
+      "required" : [
+        "watch"
+      ]
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "clearEnvironment"
+        },
+        "argument" : {
+          "maxLength" : 0
+        },
+        "contextId" : {
+          "type" : "integer"
+        }
+      },
+      "title" : "Clear Environment",
+      "description" : "Clears the argument specified as contextId, or the global environment"
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "const" : "createEnvironment"
+        },
+        "argument" : {
+          "minLength" : 1
+        }
+      },
+      "title" : "Create Environment"
+    }
+  ]
 }

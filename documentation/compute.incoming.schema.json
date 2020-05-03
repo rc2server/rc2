@@ -292,6 +292,72 @@
         }
       },
       "title" : "Create Environment"
-    }
+    },
+    {
+      "properties" : {
+        "msg" : {
+          "enum" : ["initPreview"]
+        },
+        "argument" : {
+          "type" : "string",
+          "minLength" : 0
+        },
+         "fileId" : {
+          "type" : "integer"
+        }
+     },
+      "title" : "Init Preview",
+       "required" : [
+        "fileId"
+      ]
+   },
+    {
+      "properties" : {
+        "msg" : {
+          "enum" : ["updatePreview"]
+        },
+        "argument" : {
+          "type" : "string",
+          "minLength" : 0
+        },
+         "previewId" : {
+          "type" : "integer",
+          "minimum" : 1
+        },
+        "chunkId" : {
+          "type" : "integer",
+          "minimum" : 1
+        },
+        "includePrevious" : {
+            "type" : "boolean"
+        },
+        "updateIdentifier" : {
+            "type" : "string"
+        }
+     },
+      "title" : "Update Preview",
+       "required" : [
+        "previewId",
+        "chunkId"
+      ]
+   },
+    {
+      "properties" : {
+        "msg" : {
+          "enum" : ["removePreview"]
+        },
+        "argument" : {
+          "type" : "string",
+          "minLength" : 0
+        },
+         "previewId" : {
+          "type" : "integer"
+        }
+     },
+      "title" : "Remove Preview",
+       "required" : [
+        "previewId"
+      ]
+   }
   ]
 }

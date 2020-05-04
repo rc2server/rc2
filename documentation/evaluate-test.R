@@ -1,41 +1,45 @@
 library(evaluate)
 
-rm(foobar)
-tc <- textConnection("foobar", open = "w")
+#rm(foobar)
+#tc <- textConnection("foobar", open = "w")
 
 createWrapper <- function() {
   curList <- list()
   myEnv <- new.env(parent = emptyenv())
   assign("curValues", list(), envir = myEnv)
   assign("items", list(), envir = myEnv)
+  assign("plots", list(), envir = myEnv)
   assign("nextValId", 1, envir = myEnv)
+  assign("nextPlotId", 1, envir = myEnv)
   rc2evaluate <- function(src) {
     rval <- evaluate(src, output_handler = outputHandler)
     curList <- get("items", envir = myEnv)
     curVals = get("curValues", envir = myEnv)
+    curPlots = get("plots", envir = myEnv)
+    if(length(curPlots) > 0) {
+      curList[['images']] = curPlots
+    }
     curList[["value"]] = structure((curVals))
     assign("items", curList, envir = myEnv)
     rval
   }
   outputHandler <- new_output_handler(
     source=function(value, visible = TRUE) {
-      writeLines("source", con = tc)
+#      writeLines("source", con = tc)
       curList = get("items", envir = myEnv)
       curList[['source']] = structure(list(data=value), myclass="src")
+      plots = get("plots", envir = myEnv)
+      if (length(plots) > 0) {
+        curList[['images']] = plots
+      }
       assign("items", curList, envir = myEnv)
       invisible(NULL)
   }, 
   text=function(txt) {
-    writeLines("text", con = tc)
-    # index <- get("nextIndex", envir = myEnv)
-    # assign("nextIndex", index + 1, envir = myEnv)
-    # curList = get("items", envir = myEnv)
-    # curList[[index]] = structure(list(data=txt), myclass="mytext")
-    # assign("items", curList, envir = myEnv)
-    # invisible(NULL)
+#    writeLines("text", con = tc)
   }, 
   message=function(msg) {
-    writeLines("message", con = tc)
+#    writeLines("message", con = tc)
     curList = get("items", envir = myEnv)
     curList[['message']] = structure(list(data=msg), myclass="message")
     assign("items", curList, envir = myEnv)
@@ -43,16 +47,21 @@ createWrapper <- function() {
   warning=function(msg) {
   },
   error=function(msg) {
-    writeLines("error", con = tc)
+#    writeLines("error", con = tc)
     curList = get("items", envir = myEnv)
     curList[['error']] = structure(list(data=msg), myclass="myerror")
     assign("items", curList, envir = myEnv)
   }, 
   graphics = function(data) {
-#    invisible()
+#    writeLines("graphics", con = tc)
+    plots = get("plots", envir = myEnv)
+    nextPlotId <- get("nextPlotId", envir = myEnv)
+    plots[[nextPlotId]] = data
+    assign("nextPlotId", nextPlotId + 1, envir = myEnv)
+    assign("plots", plots, envir = myEnv)
   },
 value=function(value, visible = TRUE) {
-  writeLines("value", con = tc)
+#  writeLines("value", con = tc)
   vals <- structure(list(data=value, visible=visible), class="myvalue")
   curVals <- get("curValues", envir = myEnv)
   nextValId <- get("nextValId", envir = myEnv)
@@ -64,13 +73,13 @@ value=function(value, visible = TRUE) {
   structure(list(outputHandler=outputHandler, env=myEnv, evaluate=rc2evaluate))
 }
 
-wrapper <- createWrapper()
+#wrapper <- createWrapper()
 #if (TRUE) {
 #  dd <- evaluate("44-21; rnorm(10)", output_handler = wrapper$outputHandler, debug=TRUE)
 #  dd <- wrapper$evaluate("44-21; rnorm(10)")
 #} else {
-  wrapper$evaluate("2+2; doofus(); rnorm(10); message(\"hello\")")
+#  wrapper$evaluate("2+2; doofus(); plot(rnorm(10)); plot(rnorm(4)); message(\"hello\")")
 #}
-items <- get("items", envir = wrapper$env)
-items
+#items <- get("items", envir = wrapper$env)
+#items
 

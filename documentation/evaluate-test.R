@@ -14,7 +14,9 @@ createWrapper <- function() {
       #      writeLines("source", con = tc)
 
       all = get("allItems", envir = myEnv)
-      all[[length(all) + 1]] = structure(list(data=value), myclass="src")
+      newval <- list(data=value)
+      class(newval) <- "rc2src"
+      all[[length(all) + 1]] = newval
       assign("allItems", all, envir = myEnv)
       invisible(NULL)
     }, 
@@ -24,7 +26,9 @@ createWrapper <- function() {
     message=function(msg) {
 #      writeLines("msg", con = tc)
       all = get("allItems", envir = myEnv)
-      all[[length(all) + 1]] = structure(list(data=msg), myclass="msg")
+      newval <- list(data=msg)
+      class(newval) <- "rc2msg"
+      all[[length(all) + 1]] = newval
       assign("allItems", all, envir = myEnv)
       
       invisible(NULL)
@@ -36,7 +40,9 @@ createWrapper <- function() {
     error=function(msg) {
 #      writeLines("err", con = tc)
       all = get("allItems", envir = myEnv)
-      all[[length(all) + 1]] = structure(list(data=msg), myclass="error")
+      newval <- list(data=msg)
+      class(newval) <- "rc2err"
+      all[[length(all) + 1]] = newval
       assign("allItems", all, envir = myEnv)
       
       invisible(NULL)
@@ -44,7 +50,9 @@ createWrapper <- function() {
     graphics = function(data) {
 #      writeLines("gfx", con = tc)
       all = get("allItems", envir = myEnv)
-      all[[length(all) + 1]] = structure(data, myclass="plot")
+      newval <- list(data)
+      class(newval) <- "rc2plot"
+      all[[length(all) + 1]] = newval
       assign("allItems", all, envir = myEnv)
 
       invisible(NULL)
@@ -53,15 +61,22 @@ createWrapper <- function() {
  #     writeLines("val", con = tc)
       # was getting calls with NULL, FALSE because funcs return invisible(NULL). now skip that
       if(visible == FALSE) { return(invisible(NULL)) }
-      vals <- structure(list(data=value, visible=visible), class="myvalue")
-
+      vals <- list(data=value, visible=visible)
+      class(vals) <- "valuePair"
       all = get("allItems", envir = myEnv)
-      all[[length(all) + 1]] = structure(list(vals), myclass="val")
+      newval <- structure(list(vals), myclass="val")
+      class(newval) <- "rc2value"
+      all[[length(all) + 1]] = newval
       assign("allItems", all, envir = myEnv)
       
       invisible(NULL)
     })
-  structure(list(outputHandler=outputHandler, env=myEnv, evaluate=rc2evaluate))
+  saveImage <- function(img, name) {
+    png(name)
+    replayPlot(img)
+    dev.off()
+  }
+  structure(list(outputHandler=outputHandler, env=myEnv, evaluate=rc2evaluate, saveImage=saveImage))
 }
 
 wrapper <- createWrapper()
@@ -69,8 +84,7 @@ wrapper <- createWrapper()
 #  dd <- evaluate("44-21; rnorm(10)", output_handler = wrapper$outputHandler, debug=TRUE)
 #  dd <- wrapper$evaluate("44-21; rnorm(10)")
 #} else {
-  wrapper$evaluate("2+2\n doofus()\n plot(rnorm(10))\n 1*8; plot(rnorm(4)); message(\"hello\")")
+  wrapper$evaluate("2+2\n plot(rnorm(10))\n 1*8; plot(rnorm(4)); message(\"hello\")")
 #}
 items <- get("allItems", envir = wrapper$env)
 #items
-

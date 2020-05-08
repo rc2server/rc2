@@ -3,8 +3,8 @@ library(evaluate)
 #rm(foobar)
 #tc <- textConnection("foobar", open = "w")
 
-createWrapper <- function() {
-  myEnv <- new.env(parent = emptyenv())
+createWrapper <- function(parent = emptyenv()) {
+  myEnv <- new.env(parent = parent)
   assign("allItems", list(), envir = myEnv)
   rc2evaluate <- function(src) {
     evaluate(src, output_handler = outputHandler, stop_on_error = 1L)

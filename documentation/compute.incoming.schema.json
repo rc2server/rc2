@@ -21,7 +21,11 @@
         "getVariable",
         "toggleVariableWatch",
         "clearEnvironment",
-        "createEnvironment"
+        "createEnvironment",
+        "initPreview",
+        "updatePreview",
+        "removePreview"
+
       ]
     },
     "argument" : {

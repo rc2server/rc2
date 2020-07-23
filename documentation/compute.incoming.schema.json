@@ -310,7 +310,7 @@
           "type" : "integer"
         }
      },
-      "title" : "Init Preview",
+     "title" : "Init Preview",
        "required" : [
         "fileId"
       ]
@@ -330,7 +330,7 @@
         },
         "chunkId" : {
           "type" : "integer",
-          "minimum" : 1
+          "minimum" : 0
         },
         "includePrevious" : {
             "type" : "boolean"
@@ -340,9 +340,9 @@
         }
      },
       "title" : "Update Preview",
-       "required" : [
-        "previewId",
-        "chunkId"
+      "description": "update specified preview. If chunkId is not specified, all chunks are updated",
+      "required" : [
+        "previewId"
       ]
    },
     {
@@ -358,10 +358,10 @@
           "type" : "integer"
         }
      },
-      "title" : "Remove Preview",
-       "required" : [
-        "previewId"
-      ]
+     "title" : "Remove Preview",
+     "required" : [
+       "previewId"
+     ]
    }
   ]
 }

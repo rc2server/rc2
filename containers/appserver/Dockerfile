@@ -3,11 +3,13 @@ MAINTAINER Mark Lilback <mark@lilback.com>
 
 RUN apt-get update && apt-get install -y wget default-jre gnupg
 
+COPY postgresKey.asc /tmp/
+
 # base install
-RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+RUN apt-key add /tmp/postgresKey.asc \
 	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
 	&& echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/R.list \
-	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
+	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
 	&& apt-get update \
 	&& apt-get install -y curl wget vim \
 		software-properties-common postgresql-client-9.6 \

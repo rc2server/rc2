@@ -308,11 +308,16 @@
         },
          "fileId" : {
           "type" : "integer"
+        },
+        "updateIdentifier" : {
+            "type" : "string",
+            "minLength" : 1
         }
      },
      "title" : "Init Preview",
        "required" : [
-        "fileId"
+        "fileId",
+        "updateIdentifier"
       ]
    },
     {

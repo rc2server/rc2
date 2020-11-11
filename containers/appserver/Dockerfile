@@ -18,14 +18,14 @@ RUN apt-key add /tmp/postgresKey.asc \
 		libssl-dev libreadline-dev libgoogle-glog-dev \
 	&& apt-get clean
 
-RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.1-release/ubuntu1804/swift-5.1-RELEASE/swift-5.1-RELEASE-ubuntu18.04.tar.gz | tar --strip 1 -zx 
+RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.3-release/ubuntu1804/swift-5.3-RELEASE/swift-5.3-RELEASE-ubuntu18.04.tar.gz | tar --strip 1 -zx 
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 
 #RUN locale-gen en_US.UTF-8
 
 # to blow the cache for all following lines, use --build-arg xdate=$(date +%s)
 ARG xdate="43"
-
+RUN echo "$xdate"
 USER root
 
 COPY appserver config.json /rc2/

@@ -335,7 +335,7 @@
         },
         "chunkId" : {
           "type" : "integer",
-          "minimum" : 0
+          "minimum" : -1
         },
         "includePrevious" : {
             "type" : "boolean"

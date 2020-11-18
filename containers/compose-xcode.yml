@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  tdbserver:
+    image: rc2server/dbserver:latest
+    ports:
+      - "5434:5432"
+    volumes:
+      - rc2Tdbdata:/rc2/rc2dbdata
+  tcompute:
+    image: rc2server/compute:latest
+    ports:
+      - "7714:7714"
+    volumes:
+      - rc2Tcomputelocal:/rc2compute/userlib
+    depends_on:
+      - tdbserver
+volumes:
+  rc2Tdbdata:
+  rc2Tcomputelocal:

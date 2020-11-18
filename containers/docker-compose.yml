@@ -1,17 +1,21 @@
-version: '2'
+version: '3.8'
 services:
   dbserver:
-    image: rc2server/dbserver:0.7.1
+    image: rc2server/dbserver:latest
     volumes:
       - rc2dbdata:/rc2/rc2dbdata
   compute:
-    image: rc2server/compute:0.7.5
+    image: rc2server/compute:latest
     volumes:
       - rc2computelocal:/rc2compute/userlib
     depends_on:
       - dbserver
   appserver:
-    image: rc2server/appserver:0.8.2
+    image: rc2server/appserver:latest
+    environment: # these will be passed on to the appserver from the local shell
+      - RC2_CONFIG_FILE_NAME
+      - RC2_LOG_CLIENT_OUT
+      - RC2_LOG_CLIENT_IN
     ports:
       - "3145:8088"
     depends_on:

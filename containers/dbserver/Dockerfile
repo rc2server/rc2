@@ -26,6 +26,6 @@ ENV LC_ALL en_US.UTF-8
 RUN /var/lib/postgresql/runpg.sh -V ${pgversion} -c
 EXPOSE 5432
 
-CMD ["var/lib/postgresql/runpg.sh", "-V", "11"]
+CMD ["var/lib/postgresql/runpg.sh", "-V", "${pgversion}"]
 
 LABEL io.rc2.type=dbserver

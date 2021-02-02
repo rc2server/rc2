@@ -167,7 +167,7 @@
               "minimum" : 1,
               "title" : "id of the file to execute"
             },
-            "fileVersopm" : {
+            "fileVersion" : {
               "type" : "number",
               "multipleOf" : 1,
               "minimum" : 1,

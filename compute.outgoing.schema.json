@@ -4,7 +4,7 @@
   "title" : "Rc2 Compute Messages Outgoing to Appserver",
   "description" : "Messages to communicate with Rc2 compute engine",
   "type" : "object",
-  "minProperties" : 2,
+  "minProperties" : 1,
   "properties" : {
     "msg" : {
       "type" : "string",
@@ -23,16 +23,9 @@
         "previewUpdated",
         "previewUpdateStarted"
       ]
-    },
-    "argument" : {
-      "type" : "string",
-      "description" : "main argument for the command"
     }
   },
-  "required" : [
-    "msg",
-    "argument"
-  ],
+  "required" : [ "msg" ],
   "oneOf" : [
     {
       "properties": {
@@ -310,7 +303,7 @@
         "errorCode": {
           "type": "integer"
         },
-        "updateId": {
+        "updateIdent": {
           "type": "string",
           "minimum": 0
         }
@@ -328,7 +321,7 @@
         "previewId": {
           "type": "integer"
         },
-        "updateId": {
+        "updateIdent": {
           "type": "string",
           "minimum": 0
         },

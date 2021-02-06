@@ -34,7 +34,7 @@ RUN sed -i "s/!!PGVERSION!!/${pgversion}/" /etc/postgresql/${pgversion}/main/pos
 
 EXPOSE 5432
 
-CMD ["var/lib/postgresql/runpg.sh", "-V", "${pgversion}"]
+CMD ["var/lib/postgresql/runpg.sh", "-V", "11"]
 
 
 

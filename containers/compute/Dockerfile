@@ -1,12 +1,12 @@
-FROM library/ubuntu:bionic
+FROM ubuntu:bionic
 MAINTAINER Mark Lilback <mark@lilback.com>
 
 RUN apt-get update && apt-get install -y wget default-jre gnupg
 
 # base install
-RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 E298A3A825C0D65DFD57CBB651716619E084DAB9 \
-	&& echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-	&& echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/R.list \
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list  && \
+    echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/R.list \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 \
 	&& apt-get update \
 	&& apt-get install -y curl vim \
@@ -51,3 +51,8 @@ EXPOSE 7714
 CMD ["/rc2compute/rserver"]
 
 LABEL io.rc2.type=compute
+
+#### Image Details
+# Dev image Size:   4.1  GB
+# Ubuntu:Bionic:
+# Phase1 reduction reduced the image size to 405 MB.  Committed.

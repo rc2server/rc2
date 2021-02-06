@@ -19,7 +19,9 @@ RUN apt-get update && apt-get install -y gnupg && \
     mkdir -p /rc2/pgdata; chown -R postgres /rc2; chmod 700 /rc2 /rc2/pgdata && \
     locale-gen en_US.UTF-8 && \
     pg_dropcluster ${pgversion} main && \
-    pg_createcluster -d /rc2/pgdata --locale=en_US.UTF-8 ${pgversion} main && rm -rf /rc2/pgdata/*
+    pg_createcluster -d /rc2/pgdata --locale=en_US.UTF-8 ${pgversion} main && rm -rf /rc2/pgdata/* && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY *.conf /etc/postgresql/${pgversion}/main/
 COPY rc2.sql /rc2/rc2.sql
@@ -39,5 +41,7 @@ CMD ["var/lib/postgresql/runpg.sh", "-V", "${pgversion}"]
 #### Image Details
 # Dev image Size:   448  MB
 # Ubuntu:Bionic:    63.3 MB
-# First phase of reduction reduced the image size to 405 MB.  Committed.
+# Phase1 reduction reduced the image size to 405 MB.  Committed.
+# Phase2 addition of  apt-get clean && rm -rf /var/lib/apt/lists/* reduced
+#   the image size to 369 MB.
 # Question:  Does the last run statement need to be run? Could entrypoint be used?

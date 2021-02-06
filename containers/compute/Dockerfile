@@ -61,3 +61,5 @@ CMD ["/rc2compute/rserver"]
 # Dev image Size:   4.1  GB
 # Phase1 reduction did not reduce the image size.  Something made it larger 4.24 GB.
 # Still large.  Must have been changing default-jre to default-jdk.
+# Phase2 image size: 4.03 GB
+

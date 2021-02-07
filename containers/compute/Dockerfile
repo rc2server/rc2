@@ -7,12 +7,8 @@ LABEL io.rc2.type=compute
 ARG DEBIAN_FRONTEND=noninteractive
 ARG FORCE_DLOAD=0
 ARG pgversion=9.6
-ARG swiftversion=5.1
-ARG ubuntuversion=18.04
 
-ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 ENV pgversion=${pgversion}
-ENV swiftversion=${swiftversion}
 
 ADD rc2compute.tar.gz /
 
@@ -27,12 +23,7 @@ RUN apt-get update && apt-get install -y wget software-properties-common curl wg
 	    libtiff5-dev libbz2-dev uuid-dev default-jre libssl-dev libreadline-dev libgoogle-glog-dev \
 	    xorg-dev libcairo2-dev pandoc perl gfortran && \
 	apt-get install -y --no-install-recommends texlive texinfo texlive-fonts-extra && \
-    mkdir /rc2 && \
-    wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-${swiftversion}-release/ubuntu1804/swift-${swiftversion}-RELEASE/swift-${swiftversion}-RELEASE-ubuntu${ubuntuversion}.tar.gz | tar --strip 1 -zx && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y r-base-dev && \
+    apt-get install -y r-base-dev && \
 	mkdir -p /rc2compute/userlib && \
 	echo 'R_LIBS_USER=/rc2compute/userlib' >> /etc/R/Renviron.site && \
 	echo 'options(repos = c(CRAN = "https://cloud.r-project.org/"), download.file.method = "libcurl")' >> /usr/lib/R/etc/Rprofile.site && \
@@ -62,4 +53,5 @@ CMD ["/rc2compute/rserver"]
 # Phase1 reduction did not reduce the image size.  Something made it larger 4.24 GB.
 # Still large.  Must have been changing default-jre to default-jdk.
 # Phase2 image size: 4.03 GB
+# Phase3 image size: 2.93 GB Removed swift-package download.
 

@@ -47,5 +47,13 @@ Build with:
 <!-- ```docker build -t rc2server/compute:${version} -t rc2server/compute:latest .``` -->
 
 
-```docker build --tag rc2server/compute:latest .```
+```
+docker build --tag rc2server/compute:latest .
+```
 
+```
+docker run --detach --name dbserver --volume rc2dbdata:/rc2/rc2dbdata --publish 5432:5432 rc2server/dbserver:latest
+docker run --detach --name computews --volume rc2computelocalws:/rc2compute/userlib --publish 7741:7714 rc2server/compute:latest /rc2compute/rsession
+docker run --detach --name node_red --volume rc2nodereddata:/data --publish 1880:1880 rc2server/nodered:latest node-red
+docker run --detach --name swift_5_3 swift:5.3
+```

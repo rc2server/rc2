@@ -1,6 +1,4 @@
-<style type="css">
-p > code { text-indent: -12px; padding-left: 12px; }
-</style>
+
 # Building docker containers
 
 ## Workflow:
@@ -17,8 +15,8 @@ Enter the `../rc2/containers/dbserver` directory.  A dependency from a parent di
 
 Build with:
 
-<!-- ```docker build -t rc2server/database:${version} -t rc2server/database:latest .``` -->
-```docker build --tag rc2server/database:latest .``` 
+<!-- ```docker build -t rc2server/dbserver:${version} -t rc2server/dbserver:latest .``` -->
+```docker build --tag rc2server/dbserver:latest .``` 
 
 ## `appserver`
 Change to the `../rc2/containers/appserver` directory.

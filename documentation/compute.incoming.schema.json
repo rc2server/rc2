@@ -45,6 +45,7 @@
            "wspaceId": { "type": "integer", "minimum": 0 },
            "sessionRecId": { "type": "integer", "minimum": 1 },
            "dbhost": { "type": "string" },
+           "dbport": { "type": "string" },
            "dbuser": { "type": "string" },
            "dbname": { "type": "string" },
            "dbpassword": { "type": "string" },

@@ -5,6 +5,7 @@ services:
     volumes:
       - rc2dbdata:/rc2/rc2dbdata
   compute:
+    command: ["/rc2compute/wsserver"]
     image: rc2server/compute:latest
     volumes:
       - rc2computelocal:/rc2compute/userlib
@@ -13,7 +14,8 @@ services:
   appserver:
     image: rc2server/appserver:latest
     environment: # these will be passed on to the appserver from the local shell
-      - RC2_CONFIG_FILE_NAME
+      - RC2_LOG_COMPUTE_IN
+      - RC2_LOG_COMPUTE_OUT
       - RC2_LOG_CLIENT_OUT
       - RC2_LOG_CLIENT_IN
     ports:

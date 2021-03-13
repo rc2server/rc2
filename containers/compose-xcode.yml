@@ -7,11 +7,19 @@ services:
     volumes:
       - rc2Tdbdata:/rc2/rc2dbdata
   tcompute:
-    image: rc2server/compute:latest
+    command: ["/rc2compute/wsserver"]
+    image: rc2server/compute:0.8.0
+    cap_add:
+     - SYS_PTRACE
+    security_opt:
+     - seccomp:unconfined
     ports:
       - "7714:7714"
+      - "10000-11000:10000-11000"
     volumes:
       - rc2Tcomputelocal:/rc2compute/userlib
+    environment:
+      RC2_LOG_JSON_OUT: 1
     depends_on:
       - tdbserver
 volumes:

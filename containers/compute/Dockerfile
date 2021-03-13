@@ -44,8 +44,12 @@ RUN (cd /rc2compute/RInside && R CMD INSTALL -l /usr/local/lib/R/site-library .)
 	&& mkdir -p /usr/local/lib/R/library/RInside/libs/ && cd /usr/local/lib/R/library/RInside/libs/ && \
 	ln -s /usr/local/lib/R/site-library/RInside/libs/RInside.so RInside.so
 
+ADD start.sh /rc2compute/start.sh
+
+RUN mkdir -p /cores && chmod 777 /cores
+
 EXPOSE 7714
 
-CMD ["/rc2compute/rserver"]
+CMD ["/rc2compute/start.sh"]
 
 LABEL io.rc2.type=compute

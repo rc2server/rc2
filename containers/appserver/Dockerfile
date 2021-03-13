@@ -18,7 +18,8 @@ RUN apt-key add /tmp/postgresKey.asc \
 		libssl-dev libreadline-dev libgoogle-glog-dev \
 	&& apt-get clean
 
-RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.3-release/ubuntu1804/swift-5.3-RELEASE/swift-5.3-RELEASE-ubuntu18.04.tar.gz | tar --strip 1 -zx 
+RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/development/ubuntu1804/swift-DEVELOPMENT-SNAPSHOT-2021-03-07-a/swift-DEVELOPMENT-SNAPSHOT-2021-03-07-a-ubuntu18.04.tar.gz | tar --strip 1 -zx 
+# RUN mkdir /rc2 && wget --max-redirect 4 --quiet -O - https://swift.org/builds/swift-5.3-release/ubuntu1804/swift-5.3-RELEASE/swift-5.3-RELEASE-ubuntu18.04.tar.gz | tar --strip 1 -zx 
 ENV LD_LIBRARY_PATH=/usr/lib/swift/linux
 
 #RUN locale-gen en_US.UTF-8

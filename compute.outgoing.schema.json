@@ -1,0 +1,364 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "$id" : "https://rc2.io/something",
+  "title" : "Rc2 Compute Messages Outgoing to Appserver",
+  "description" : "Messages to communicate with Rc2 compute engine",
+  "type" : "object",
+  "minProperties" : 1,
+  "properties" : {
+    "msg" : {
+      "type" : "string",
+      "description" : "the command to perform",
+      "enum" : [
+        "openresponse",
+        "execComplete",
+        "results",
+        "showoutput",
+        "variableupdate",
+        "variablevalue",
+        "help",
+        "error",
+        "envCreated",
+        "previewInited",
+        "previewUpdated",
+        "previewUpdateStarted"
+      ]
+    }
+  },
+  "required" : [ "msg" ],
+  "oneOf" : [
+    {
+      "properties": {
+        "msg": { "enum": ["open"] },
+        "success": {
+          "type" : "boolean"
+        },
+        "errorMessage": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "title": "Connection Open Response",
+      "required": ["success"]
+    },
+    {
+      "properties" : {
+        "msg" : { "enum" : ["help"] },
+        "topic" : {
+          "type" : "string",
+          "minLength" : 1
+        },
+        "paths" :{
+          "type": "array",
+          "minLength" : 1,
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title" : "Help",
+      "description" : "Paths for Topic in Help"
+    },
+    {
+      "properties" : {
+        "msg" : { "enum" : ["variablevalue"] },
+        "name" : {
+          "type" : "string",
+          "minLength" : 1
+        },
+        "value" : {
+          "type" : "number",
+          "multipleOf" : 1,
+          "minimum" : 1
+        },
+        "contextId" : {
+          "type" : "integer"
+        },
+        "startTime" : {
+          "type" : "string",
+          "pattern" : "^[0-9]*$",
+          "title" : "start time of query in seconds since 1970"
+        },
+        "clientData" : {
+          "type": "object",
+          "properties": {
+            "fileId": {
+              "type": "number",
+              "multipleOf": 1,
+              "minimum": 1,
+              "title": "id of the file to execute"
+            },
+            "fileVersion": {
+              "type": "number",
+              "multipleOf": 1,
+              "minimum": 1,
+              "title": "version of the file to execute"
+            }
+          }
+        },
+        "clientIdent" : {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "title" : "VariableValue",
+      "description" : "Response from a Get Variable Command"
+    },
+    {
+      "properties": {
+        "msg": { "enum": [ "variableupdate" ] },
+        "delta": {
+          "type": "boolean"
+        },
+        "variables": {
+          "type": "array",
+          "minLength": 1,
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "variablesAdded": {
+          "type": "array",
+          "minLength": 1,
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "variablesRemoved": {
+          "type": "array",
+          "minLength": 1,
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "contextId": {
+          "type": "integer"
+        },
+        "clientData": {
+          "type": "array",
+          "minLength": 1,
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "variableUpdate",
+      "description": "Response from a list of variables.  Also sent when the client is watching for changes."
+    },
+    {
+      "properties": {
+        "msg": { "enum": ["error"] },
+        "error": { "type" : "integer" },
+        "errorDetails": {
+          "type": "string",
+          "minimum": 0
+        },
+        "queryId": { "type": "integer"},
+        "transId": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "title": "Error sent from Rc2Compute"
+    },
+    {
+      "properties": {
+        "msg": { "enum": [ "results" ] },
+        "string": {
+          "type": "string",
+          "minimum": 0
+        },
+        "is_error": {
+          "type": "boolean"
+        },
+        "queryId": {
+          "type": "integer"
+        },
+        "transId": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "title": "results",
+      "description": "Any output from Rc2Compute stdout or stderr."
+    },
+    {
+      "properties": {
+        "msg": {
+          "enum": [
+            "showoutput"
+          ]
+        },
+        "fileId": {
+          "type": "integer"
+        },
+        "fileName": {
+          "type": "string",
+          "minimum": 0
+        },
+        "fileVersion": {
+          "type": "integer"
+        },
+        "queryId": {
+          "type": "integer"
+        },
+        "transId": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "title": "showoutput",
+      "description": "Files generated by the query that should be displayed (eg. html, pdf)."
+    },
+    {
+      "properties": {
+        "msg": {
+          "enum": [
+            "execComplete"
+          ]
+        },
+        "expectShowOutput": {
+          "type": "boolean"
+        },
+        "queryId": {
+          "type": "integer"
+        },
+        "startTime": {
+          "type": "string",
+          "pattern": "^[0-9]*$",
+          "title": "start time of query in seconds since 1970"
+        },
+        "images": {
+          "type": "array",
+          "minLength": 0,
+          "items": [
+            {
+              "type": "integer"
+            }
+          ]
+        },
+        "imgBatch": {
+          "type": "integer"
+        },
+        "clientData": {
+          "type": "array",
+          "minLength": 1,
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "transId": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "title": "execComplete",
+      "description": "Completed execution of Rc2compute on query."
+    },
+    {
+      "properties": {
+        "msg": {
+          "enum": [
+            "envCreated"
+          ]
+        },
+        "contextId": {
+          "type": "integer"
+        },
+        "transId": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "title": "envCreated",
+      "description": "Environment Created."
+    },
+    {
+      "properties": {
+        "msg": {
+          "enum": [
+            "previewInited"
+          ]
+        },
+        "previewId": {
+          "type": "integer"
+        },
+        "fileId": {
+          "type": "integer"
+        },
+        "errorCode": {
+          "type": "integer"
+        },
+        "updateIdent": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "title": "previewInited",
+      "description": "Preview initialized"
+    },
+    {
+      "properties": {
+        "msg": {
+          "enum": [
+            "previewUpdateStarted"
+          ]
+        },
+        "previewId": {
+          "type": "integer"
+        },
+        "updateIdent": {
+          "type": "string",
+          "minimum": 0
+        },
+        "activeChunks": {
+          "type": "array",
+          "minLength": 0,
+          "items": [
+            {
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "title": "previewUpdateStartedData",
+      "description": "Preview data for active chunks."
+    },
+    {
+      "properties": {
+        "msg": { "enum":  [ "previewUpdated"] },
+        "previewId": {
+          "type": "integer"
+        },
+        "chunkId": {
+          "type": "integer"
+        },
+        "complete": {"type": "boolean"},
+        "updateId": {
+          "type": "string",
+          "minimum": 0
+        },
+        "content": {
+          "type": "string",
+          "minimum": 0
+        }
+      },
+      "title": "previewUpdateStarted",
+      "description": "Preview Update Status."
+    }
+  ]
+}

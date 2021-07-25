@@ -2,5 +2,8 @@
 	"dbHost": "dbserver",
 	"computeHost": "compute",
 	"computeTimeout": 4,
-	"computeDbHost": "dbserver"
+	"computeDbHost": "dbserver",
+	"authCookieName": "rc2-awt",
+	"enableCors": true,
+	"corsOrigin": "http://localhost:9080"
 }

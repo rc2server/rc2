@@ -72,50 +72,6 @@ DROP FUNCTION IF EXISTS public.rcfile_notifyi();
 DROP FUNCTION IF EXISTS public.rcfile_notifyd();
 DROP FUNCTION IF EXISTS public.rc2setpassword(userid integer, newpassword character varying);
 DROP FUNCTION IF EXISTS public.rc2createuser(login character varying, fname character varying, lname character varying, email character varying, password character varying);
-DROP EXTENSION IF EXISTS pgcrypto;
-DROP EXTENSION IF EXISTS plpgsql;
-DROP SCHEMA IF EXISTS public;
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA public;
-
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON SCHEMA public IS 'standard public schema';
-
-
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
-
 
 SET search_path = public, pg_catalog;
 

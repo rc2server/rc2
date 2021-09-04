@@ -1,5 +1,5 @@
 FROM library/ubuntu:bionic-20210118
-MAINTAINER Mark Lilback <mark@lilback.com>
+LABEL org.opencontainers.image.authors="mark@lilback.com"
 
 COPY postgresKey.asc /tmp/
 

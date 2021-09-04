@@ -1,5 +1,5 @@
 FROM library/ubuntu:bionic
-MAINTAINER Mark Lilback <mark@lilback.com>
+LABEL org.opencontainers.image.authors="mark@lilback.com"
 
 RUN apt-get update && apt-get install -y wget default-jre gnupg
 
